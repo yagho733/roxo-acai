@@ -33,7 +33,7 @@ const PHOTOS = {
   ninho: 'https://images.unsplash.com/photo-1490324028530-3df5a9af0637?auto=format&fit=crop&w=1500&q=84',
   pacoca: 'https://images.unsplash.com/photo-1641579719214-534970165dc9?auto=format&fit=crop&w=1500&q=84',
   duo: 'https://images.unsplash.com/photo-1627308594190-a057cd4bfac8?auto=format&fit=crop&w=1800&q=86',
-  combo: 'https://images.unsplash.com/photo-1764607358438-a8ac816f59fa?auto=format&fit=crop&w=1800&q=84',
+  combo: '/images/acai-hero.png',
   final: '/images/acai-bowl.png',
 } as const
 
