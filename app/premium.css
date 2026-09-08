@@ -1,0 +1,524 @@
+/* ROXO 53 — direção visual editorial / food & beverage
+   Camada final de acabamento: mantém o funcionamento e rompe com o visual de template. */
+
+:root {
+  --paper: #fff2dd;
+  --paper-deep: #f5dfbd;
+  --ink: #2a1233;
+  --berry-hot: #d9506a;
+  --mango: #f4b942;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: .035;
+  background-image: radial-gradient(circle at 25% 20%, #2a1233 0 .55px, transparent .7px);
+  background-size: 7px 7px;
+  mix-blend-mode: multiply;
+}
+
+.site-header {
+  background: color-mix(in srgb, var(--cream) 97%, transparent);
+  border-bottom-color: color-mix(in srgb, var(--primary) 13%, transparent);
+}
+
+.brand-lockup span:first-child {
+  letter-spacing: -.065em;
+}
+
+.header-order,
+.button-primary,
+.square-add,
+.mobile-cart-button {
+  transition: transform 180ms ease, background-color 180ms ease, color 180ms ease;
+}
+
+.header-order:hover,
+.button-primary:hover {
+  transform: translateY(-2px);
+}
+
+/* HERO — produto e tipografia em escala de campanha, sem selo/numero sobre a foto */
+.hero-section {
+  isolation: isolate;
+}
+
+.hero-stamp,
+.hero-index {
+  display: none !important;
+}
+
+.hero-media {
+  overflow: hidden;
+  background: #1d1023;
+}
+
+.hero-media::after {
+  content: 'AÇAÍ  /  FRUTA  /  CREME  /  CROCÂNCIA';
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 3;
+  padding: .55rem .7rem;
+  background: var(--cream);
+  color: var(--primary);
+  font-family: var(--font-dm-mono), monospace;
+  font-size: .52rem;
+  font-weight: 500;
+  letter-spacing: .18em;
+  white-space: nowrap;
+}
+
+.hero-media > img {
+  filter: saturate(.92) contrast(1.04);
+  transform: scale(1.002);
+}
+
+.hero-title {
+  text-wrap: pretty;
+}
+
+.hero-description {
+  max-width: 28rem;
+}
+
+.ingredient-strip {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.ingredient-strip span {
+  color: color-mix(in srgb, var(--cream) 68%, transparent) !important;
+}
+
+.ingredient-strip i {
+  background: var(--accent) !important;
+}
+
+/* FAVORITOS — grid assimétrico de editorial, não três cards iguais */
+.featured-editorial {
+  position: relative;
+}
+
+.featured-photo {
+  background: #1d1023;
+}
+
+.featured-photo img {
+  filter: saturate(.9) contrast(1.035);
+}
+
+.featured-info {
+  border-top: 1px solid color-mix(in srgb, var(--cream) 18%, transparent);
+  padding-top: 1rem;
+}
+
+.photo-number {
+  top: auto;
+  left: auto;
+  right: .8rem;
+  bottom: .8rem;
+  width: auto;
+  height: auto;
+  padding: .48rem .6rem;
+  background: var(--cream);
+}
+
+.product-add {
+  border: 0;
+  padding: .15rem 0;
+  color: var(--accent);
+}
+
+.product-add svg {
+  transition: transform 180ms ease;
+}
+
+.product-add:hover svg {
+  transform: translateX(4px);
+}
+
+/* COMBOS — fotos coerentes com o produto. */
+.combo-panel {
+  border: 1px solid color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
+.combo-panel-1 {
+  background-image: url('https://images.unsplash.com/photo-1627308594190-a057cd4bfac8?auto=format&fit=crop&w=1800&q=88');
+  background-size: cover;
+  background-position: center;
+}
+
+.combo-panel-1 > img {
+  opacity: 0;
+}
+
+.combo-panel-2 {
+  background-image: url('https://images.pexels.com/photos/4553027/pexels-photo-4553027.jpeg?auto=compress&cs=tinysrgb&w=1800');
+  background-size: cover;
+  background-position: center;
+}
+
+.combo-panel-2 > img {
+  opacity: 0;
+}
+
+.combo-shade {
+  background: linear-gradient(to top, rgba(30, 13, 36, .84), rgba(30, 13, 36, .06) 70%);
+}
+
+/* BUILDER — mais parecido com balcão/cardápio que com formulário SaaS */
+.builder-section {
+  background: var(--paper);
+  border-top: 1px solid color-mix(in srgb, var(--primary) 10%, transparent);
+}
+
+.builder-workspace {
+  border-top: 1px solid color-mix(in srgb, var(--primary) 16%, transparent);
+  padding-top: 1.5rem;
+}
+
+.option-group {
+  padding-top: 1.15rem;
+}
+
+.size-option,
+.choice-pill,
+.order-summary {
+  border-color: color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+.size-option:hover,
+.choice-pill:hover {
+  transform: translateY(-1px);
+}
+
+.order-summary {
+  background: transparent;
+}
+
+.summary-chip {
+  border: 1px solid color-mix(in srgb, var(--primary) 12%, transparent);
+  background: transparent;
+}
+
+/* IMAGEM DE IMPACTO — foto real validada; sem reaproveitar a mesma foto de produto */
+.impact-section {
+  background-image: url('https://images.unsplash.com/photo-1490324028530-3df5a9af0637?auto=format&fit=crop&w=2200&q=88');
+  background-size: cover;
+  background-position: center 52%;
+}
+
+.impact-section > img {
+  opacity: 0;
+}
+
+.impact-overlay {
+  background: linear-gradient(90deg, rgba(30, 13, 36, .62), rgba(30, 13, 36, .08) 65%);
+}
+
+.impact-title {
+  text-shadow: none;
+}
+
+/* CARDÁPIO — linhas de restaurante, mais respiro e resposta no hover */
+.menu-row {
+  transition: background-color 170ms ease, padding-left 170ms ease, padding-right 170ms ease;
+}
+
+.menu-row:hover {
+  background: color-mix(in srgb, var(--berry) 7%, transparent);
+}
+
+.menu-tabs button {
+  transition: color 170ms ease, border-color 170ms ease;
+}
+
+.location-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.location-card::after {
+  content: '';
+  position: absolute;
+  right: -12%;
+  bottom: -18%;
+  width: 15rem;
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* CTA FINAL — fotografia real diferente dos demais produtos */
+.final-photo {
+  background-image: url('https://images.unsplash.com/photo-1641579719214-534970165dc9?auto=format&fit=crop&w=1900&q=88');
+  background-size: cover;
+  background-position: center;
+}
+
+.final-photo > img {
+  opacity: 0;
+}
+
+.final-copy {
+  border-top: 1px solid color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
+/* Corrige thumbnails que ainda apontavam para as imagens locais antigas. */
+.cart-thumb:has(img[src='/images/acai-hero.png']) {
+  background-image: url('https://images.pexels.com/photos/4553027/pexels-photo-4553027.jpeg?auto=compress&cs=tinysrgb&w=700');
+  background-size: cover;
+  background-position: center;
+}
+
+.cart-thumb:has(img[src='/images/acai-hero.png']) img,
+.cart-thumb:has(img[src='/images/acai-bowl.png']) img {
+  opacity: 0;
+}
+
+.cart-thumb:has(img[src='/images/acai-bowl.png']) {
+  background-image: url('https://images.unsplash.com/photo-1641579719214-534970165dc9?auto=format&fit=crop&w=700&q=82');
+  background-size: cover;
+  background-position: center;
+}
+
+.cart-drawer {
+  border-left: 1px solid color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
+@media (min-width: 768px) {
+  .section-shell {
+    width: min(100% - 4.5rem, 1540px);
+  }
+
+  .hero-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 0;
+    min-height: calc(100svh - 73px);
+    padding-block: 2.2rem 3.2rem;
+  }
+
+  .hero-copy {
+    grid-column: 1 / span 7;
+    padding-right: clamp(2rem, 5vw, 6rem);
+  }
+
+  .hero-media {
+    grid-column: 8 / -1;
+    min-height: calc(100svh - 138px);
+  }
+
+  .hero-title {
+    max-width: 8.2em;
+    font-size: clamp(5.2rem, 7.1vw, 8.8rem);
+    line-height: .79;
+  }
+
+  .hero-description {
+    margin-top: 2rem;
+    font-size: 1rem;
+  }
+
+  .featured-editorial {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 2rem;
+    row-gap: 7rem;
+  }
+
+  .featured-product-1 {
+    grid-column: 1 / span 7;
+  }
+
+  .featured-product-2 {
+    grid-column: 9 / span 4;
+    margin-top: 9rem;
+  }
+
+  .featured-product-3 {
+    grid-column: 4 / span 6;
+    margin-top: -1rem;
+  }
+
+  .featured-product-1 .featured-photo {
+    min-height: 680px;
+  }
+
+  .featured-product-2 .featured-photo {
+    min-height: 520px;
+  }
+
+  .featured-product-3 .featured-photo {
+    min-height: 610px;
+  }
+
+  .combo-grid {
+    grid-template-columns: 1.32fr .68fr;
+    gap: 1.5rem;
+  }
+
+  .combo-panel-1 {
+    min-height: 690px;
+  }
+
+  .combo-panel-2 {
+    min-height: 520px;
+    margin-bottom: 2.5rem;
+  }
+
+  .builder-grid {
+    grid-template-columns: minmax(270px, .52fr) minmax(0, 1.48fr);
+    gap: clamp(4rem, 7vw, 8rem);
+  }
+
+  .builder-workspace {
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 3rem;
+  }
+
+  .order-summary {
+    border: 0;
+    border-left: 1px solid color-mix(in srgb, var(--primary) 18%, transparent);
+    padding: 0 0 0 2rem;
+  }
+
+  .menu-row {
+    padding-inline: .8rem;
+  }
+
+  .menu-row:hover {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .final-cta {
+    grid-template-columns: 56% 44%;
+    min-height: min(82vh, 860px);
+  }
+
+  .final-copy {
+    padding-inline: clamp(3.5rem, 6vw, 8rem);
+    border-top: 0;
+    border-left: 1px solid color-mix(in srgb, var(--primary) 13%, transparent);
+  }
+}
+
+@media (min-width: 1200px) {
+  .site-header .section-shell {
+    min-height: 78px;
+  }
+
+  .hero-grid {
+    min-height: calc(100svh - 79px);
+  }
+
+  .hero-media {
+    min-height: calc(100svh - 145px);
+  }
+
+  .featured-product-1 .featured-photo {
+    min-height: 720px;
+  }
+
+  .featured-product-2 .featured-photo {
+    min-height: 560px;
+  }
+}
+
+@media (max-width: 767px) {
+  body::before {
+    opacity: .022;
+  }
+
+  .hero-grid {
+    gap: 1.8rem;
+    padding-top: 1rem;
+  }
+
+  .hero-media {
+    min-height: clamp(320px, 92vw, 430px);
+  }
+
+  .hero-media::after {
+    right: .7rem;
+    bottom: .7rem;
+    max-width: calc(100% - 1.4rem);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .hero-title {
+    font-size: clamp(3.35rem, 15.2vw, 4.2rem);
+    line-height: .79;
+  }
+
+  .hero-description {
+    margin-top: 1.25rem;
+  }
+
+  .ingredient-strip .section-shell {
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .ingredient-strip .section-shell::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ingredient-strip span {
+    flex: 0 0 auto;
+  }
+
+  .featured-editorial {
+    gap: 4.25rem;
+  }
+
+  .featured-photo {
+    min-height: 360px;
+  }
+
+  .featured-info {
+    padding-top: .9rem;
+  }
+
+  .combo-panel {
+    min-height: 430px;
+  }
+
+  .builder-workspace {
+    gap: 2.2rem;
+  }
+
+  .order-summary {
+    border-left: 3px solid var(--berry);
+  }
+
+  .impact-section {
+    min-height: 68vh;
+    background-position: 48% center;
+  }
+
+  .final-photo {
+    min-height: 470px;
+  }
+
+  .final-copy {
+    padding-top: 3rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before {
+    display: none;
+  }
+}
