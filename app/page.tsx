@@ -1,47 +1,86 @@
+'use client'
+
+import Image from 'next/image'
+import { useState } from 'react'
+import { ArrowDown, ArrowUpRight, Check, ChevronDown, Minus, Plus, ShoppingBag, X } from 'lucide-react'
+
+type Product = { id: string; name: string; description: string; price: number; image?: string; category: string }
+type CartItem = Product & { quantity: number }
+
+const featured: Product[] = [
+  { id: 'classico', name: 'Clássico 53', description: 'Açaí, banana, morango, granola e leite em pó.', price: 19.9, image: '/images/acai-bowl.png', category: 'Açaí' },
+  { id: 'ninho', name: 'Ninho & Morango', description: 'Açaí, creme de Ninho, morango e leite em pó.', price: 22.9, image: '/images/acai-hero.png', category: 'Açaí' },
+  { id: 'pacoca', name: 'Paçoca Crunch', description: 'Açaí, creme de amendoim, paçoca, banana e granola.', price: 21.9, image: '/images/acai-closeup.png', category: 'Açaí' },
+]
+const sizes = [{ name: '300 ml', price: 14.9 }, { name: '500 ml', price: 18.9 }, { name: '700 ml', price: 22.9 }]
+const fruits = ['Banana', 'Morango', 'Kiwi']
+const toppings = ['Granola', 'Paçoca', 'Leite em pó', 'Gotas de chocolate']
+const creams = ['Creme de Ninho', 'Creme de paçoca', 'Creme de chocolate']
+const menu: Product[] = [
+  ...featured,
+  { id: 'duo', name: 'Combo Duo', description: '2 açaís 500 ml.', price: 35.9, category: 'Combos' },
+  { id: 'combo53', name: 'Combo 53', description: 'Açaí 500 ml + bebida.', price: 23.9, category: 'Combos' },
+  { id: 'agua', name: 'Água mineral', description: 'Com ou sem gás.', price: 4.9, category: 'Bebidas' },
+  { id: 'mate', name: 'Mate gelado', description: 'Mate natural, 300 ml.', price: 7.9, category: 'Bebidas' },
+]
+const money = (value: number) => `R$ ${value.toFixed(2).replace('.', ',')}`
+
 export default function Page() {
+  const [cart, setCart] = useState<CartItem[]>([])
+  const [drawer, setDrawer] = useState(false)
+  const [mobileMenu, setMobileMenu] = useState(false)
+  const [done, setDone] = useState(false)
+  const [size, setSize] = useState(sizes[1])
+  const [selected, setSelected] = useState<string[]>([])
+  const [category, setCategory] = useState('Açaí')
+
+  const addToCart = (product: Product) => {
+    setCart((current) => {
+      const found = current.find((item) => item.id === product.id)
+      if (found) return current.map((item) => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item)
+      return [...current, { ...product, quantity: 1 }]
+    })
+  }
+  const changeQuantity = (id: string, amount: number) => setCart((current) => current.flatMap((item) => item.id === id ? (item.quantity + amount > 0 ? [{ ...item, quantity: item.quantity + amount }] : []) : [item]))
+  const toggle = (item: string) => setSelected((current) => current.includes(item) ? current.filter((x) => x !== item) : [...current, item])
+  const customPrice = size.price + selected.length * 1.5
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0)
+  const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
+
   return (
-    <main
-      style={{
-        colorScheme: 'light dark',
-        position: 'relative',
-        display: 'flex',
-        minHeight: '100vh',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'light-dark(#fff, #000)',
-        color: 'light-dark(#000, #fff)',
-      }}
-    >
-      <svg
-        aria-hidden="true"
-        style={{ width: 80, height: 80 }}
-        width={80}
-        height={80}
-        fill="none"
-        viewBox="0 0 20 20"
-        xmlns="http://www.w3.org/2000/svg"
-        stroke="currentColor"
-        strokeWidth="0.5"
-      >
-        <path
-          d="M14.2 14.2H17V6.9375C17 4.76288 15.2371 3 13.0625 3H5.8V5.8M14.2 14.2V7.79063L7.79062 14.2H14.2ZM14.2 14.2V17H6.9375C4.76288 17 3 15.2371 3 13.0625V5.8H5.8M5.8 5.8V12.2313L12.2313 5.8H5.8Z"
-          strokeLinejoin="round"
-        />
-      </svg>
-      <p
-        style={{
-          position: 'absolute',
-          left: '50%',
-          top: 'calc(50% + 56px)',
-          transform: 'translateX(-50%)',
-          whiteSpace: 'nowrap',
-          fontSize: '14px',
-          fontWeight: 500,
-          color: 'light-dark(#71717a, #a1a1aa)',
-        }}
-      >
-        Your v0 generation will show here.
-      </p>
+    <main className="min-h-screen overflow-hidden bg-background text-foreground">
+      <header className="sticky top-0 z-40 border-b border-primary/10 bg-background/95 backdrop-blur-sm">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-10">
+          <a href="#top" className="leading-none" aria-label="ROXO 53 início"><span className="font-display text-xl font-bold tracking-tight">ROXO 53</span><span className="mt-1 block font-mono text-[9px] tracking-[0.24em] text-primary/65">AÇAÍ & BOWLS</span></a>
+          <nav className="hidden items-center gap-8 text-[11px] font-bold uppercase tracking-[0.14em] lg:flex"><a href="#pedidos">Mais pedidos</a><a href="#monte">Monte o seu</a><a href="#cardapio">Cardápio</a><a href="#local">Local</a></nav>
+          <div className="flex items-center gap-2"><button onClick={() => setDrawer(true)} className="relative flex min-h-11 items-center gap-2 bg-primary px-4 text-xs font-bold uppercase tracking-wider text-primary-foreground transition-transform hover:-translate-y-0.5" aria-label="Abrir pedido"><ShoppingBag size={16} /> Pedir{totalItems > 0 && <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[10px] text-primary">{totalItems}</span>}</button><button className="flex min-h-11 w-11 items-center justify-center border border-primary/20 lg:hidden" onClick={() => setMobileMenu(!mobileMenu)} aria-label="Abrir menu">{mobileMenu ? <X size={18} /> : <span className="space-y-1"><i className="block h-px w-4 bg-current" /><i className="block h-px w-4 bg-current" /></span>}</button></div>
+        </div>
+        {mobileMenu && <nav className="border-t border-primary/10 px-5 py-4 lg:hidden"><div className="flex flex-col gap-4 text-xs font-bold uppercase tracking-[0.14em]"><a href="#pedidos" onClick={() => setMobileMenu(false)}>Mais pedidos</a><a href="#monte" onClick={() => setMobileMenu(false)}>Monte o seu</a><a href="#cardapio" onClick={() => setMobileMenu(false)}>Cardápio</a><a href="#local" onClick={() => setMobileMenu(false)}>Local</a></div></nav>}
+      </header>
+
+      <section id="top" className="mx-auto grid max-w-7xl items-center gap-8 px-5 pb-14 pt-10 md:grid-cols-[1fr_0.85fr] md:px-10 md:pb-24 md:pt-20 lg:grid-cols-[1.05fr_0.95fr]">
+        <div className="order-2 md:order-1"><p className="mb-6 font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-berry">Feito na hora · Pelotas, RS</p><h1 className="max-w-xl font-display text-[clamp(3.5rem,11vw,8rem)] font-bold leading-[0.84] tracking-[-0.07em]">DO TEU<br /><span className="text-berry">JEITO.</span><br />ATÉ A ÚLTIMA<br />COLHERADA.</h1><p className="mt-8 max-w-sm text-base leading-relaxed text-primary/70">Escolhe o tamanho, monta os complementos e pede do jeito que tu gosta.</p><div className="mt-8 flex flex-wrap gap-3"><a href="#monte" className="inline-flex min-h-12 items-center gap-3 bg-primary px-5 text-xs font-bold uppercase tracking-wider text-primary-foreground transition-transform hover:-translate-y-1">Montar meu açaí <ArrowDown size={15} /></a><a href="#cardapio" className="inline-flex min-h-12 items-center border border-primary/25 px-5 text-xs font-bold uppercase tracking-wider transition-colors hover:bg-primary/5">Ver cardápio</a></div></div>
+        <div className="order-1 relative mx-auto w-full max-w-md md:order-2"><div className="absolute -right-3 top-6 font-mono text-[10px] font-bold uppercase tracking-[0.25em] text-primary/45 [writing-mode:vertical-rl]">açaí de verdade</div><div className="relative aspect-[0.84] overflow-hidden bg-accent"><Image src="/images/acai-hero.png" alt="Copo de açaí com frutas e granola" fill priority className="object-cover" sizes="(max-width: 768px) 90vw, 42vw" /></div><div className="absolute -bottom-4 -left-4 bg-berry px-4 py-3 font-display text-lg font-bold text-primary-foreground">feito do teu jeito<span className="ml-2 text-accent">*</span></div></div>
+      </section>
+
+      <section id="pedidos" className="bg-primary px-5 py-16 text-primary-foreground md:px-10 md:py-24"><div className="mx-auto max-w-7xl"><div className="mb-12 flex items-end justify-between gap-6"><div><p className="mb-4 font-mono text-[10px] uppercase tracking-[0.3em] text-accent">01 · favoritos da casa</p><h2 className="max-w-lg font-display text-5xl font-bold leading-[0.9] tracking-[-0.06em] md:text-7xl">OS QUE NÃO<br /><span className="text-accent">FICAM PARADOS.</span></h2></div><ArrowUpRight className="hidden text-accent md:block" size={36} /></div><div className="grid gap-10 md:grid-cols-3 md:gap-6">{featured.map((item, index) => <article key={item.id} className={`group ${index === 1 ? 'md:mt-16' : ''}`}><button onClick={() => addToCart(item)} className="block w-full text-left"><div className="relative aspect-[0.95] overflow-hidden bg-cream"><Image src={item.image!} alt={item.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" sizes="(max-width: 768px) 90vw, 30vw" /></div><div className="flex items-start justify-between gap-4 pt-5"><div><h3 className="font-display text-2xl font-bold uppercase">{item.name}</h3><p className="mt-2 max-w-xs text-sm leading-relaxed text-primary-foreground/65">{item.description}</p></div><span className="whitespace-nowrap font-mono text-sm text-accent">{money(item.price)}</span></div></button></article>)}</div></div></section>
+
+      <section id="monte" className="bg-cream px-5 py-16 md:px-10 md:py-24"><div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.75fr_1.25fr]"><div><p className="mb-4 font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-berry">02 · personaliza</p><h2 className="font-display text-6xl font-bold leading-[0.86] tracking-[-0.07em] text-primary md:text-8xl">MONTE<br />O TEU.</h2><p className="mt-6 max-w-xs text-sm leading-relaxed text-primary/65">O bowl começa com a tua escolha. O resto é por nossa conta.</p><div className="mt-10 hidden border-l-2 border-berry pl-5 lg:block"><p className="font-display text-2xl font-bold leading-tight text-primary">Quanto mais teu,<br />mais gostoso.</p></div></div><div className="space-y-9"><OptionGroup title="Escolhe o tamanho" step="01"><div className="grid grid-cols-3 gap-2">{sizes.map((item) => <button key={item.name} onClick={() => setSize(item)} className={`border p-4 text-left transition-colors ${size.name === item.name ? 'border-primary bg-primary text-primary-foreground' : 'border-primary/20 hover:border-primary'}`}><span className="block font-display text-lg font-bold">{item.name}</span><span className="mt-1 block font-mono text-xs">{money(item.price)}</span></button>)}</div></OptionGroup><OptionGroup title="Escolhe as frutas" step="02"><ChoiceList items={fruits} selected={selected} toggle={toggle} /></OptionGroup><OptionGroup title="Vai um complemento?" step="03"><ChoiceList items={toppings} selected={selected} toggle={toggle} /></OptionGroup><OptionGroup title="Finaliza com creme" step="04"><ChoiceList items={creams} selected={selected} toggle={toggle} /></OptionGroup><div className="flex flex-col gap-5 border-t border-primary/15 pt-6 sm:flex-row sm:items-end sm:justify-between"><div><p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-primary/55">Seu açaí</p><p className="mt-2 font-display text-2xl font-bold text-primary">{selected.length ? selected.join(', ') : 'Escolha seus complementos'}</p></div><div className="flex items-center justify-between gap-6 sm:block sm:text-right"><p className="font-mono text-xl font-bold text-berry">{money(customPrice)}</p><button onClick={() => addToCart({ id: `custom-${size.name}`, name: `Açaí ${size.name}`, description: selected.join(', ') || 'Açaí personalizado', price: customPrice, category: 'Açaí' })} className="inline-flex min-h-12 items-center gap-3 bg-primary px-5 text-xs font-bold uppercase tracking-wider text-primary-foreground hover:bg-berry">Adicionar ao pedido <Plus size={15} /></button></div></div></div></div></section>
+
+      <section className="relative min-h-[55vh] overflow-hidden bg-primary"><Image src="/images/acai-closeup.png" alt="Detalhe de camadas de açaí e creme" fill className="object-cover opacity-75" sizes="100vw" /><div className="absolute inset-0 bg-primary/25" /><div className="relative flex min-h-[55vh] items-end px-5 py-10 md:px-10 md:py-16"><h2 className="font-display text-7xl font-bold leading-[0.82] tracking-[-0.07em] text-cream md:text-[10rem]">CAMADA POR<br /><span className="text-accent">CAMADA.</span></h2></div></section>
+
+      <section id="cardapio" className="px-5 py-16 md:px-10 md:py-24"><div className="mx-auto max-w-5xl"><div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between"><div><p className="mb-4 font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-berry">03 · cardápio</p><h2 className="font-display text-6xl font-bold leading-[0.86] tracking-[-0.07em]">ESCOLHE<br />E PEDE.</h2></div><div className="flex border-b border-primary/20">{['Açaí', 'Combos', 'Bebidas'].map((item) => <button key={item} onClick={() => setCategory(item)} className={`px-3 py-3 text-xs font-bold uppercase tracking-wider ${category === item ? 'border-b-2 border-berry text-berry' : 'text-primary/45'}`}>{item}</button>)}</div></div><div className="divide-y divide-primary/15 border-y border-primary/15">{menu.filter((item) => item.category === category).map((item, index) => <div key={item.id} className="flex items-center justify-between gap-5 py-6"><div className="flex items-start gap-5"><span className="font-mono text-xs text-primary/35">0{index + 1}</span><div><h3 className="font-display text-xl font-bold uppercase">{item.name}</h3><p className="mt-1 text-sm text-primary/60">{item.description}</p></div></div><div className="flex items-center gap-4"><span className="font-mono text-sm font-bold">{money(item.price)}</span><button onClick={() => addToCart(item)} className="flex h-10 w-10 items-center justify-center bg-accent text-primary transition-transform hover:scale-105" aria-label={`Adicionar ${item.name}`}><Plus size={18} /></button></div></div>)}</div></div></section>
+
+      <section id="local" className="border-t border-primary/10 bg-cream px-5 py-16 md:px-10 md:py-24"><div className="mx-auto grid max-w-7xl gap-12 md:grid-cols-2"><div><p className="mb-4 font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-berry">04 · sem complicar</p><h2 className="font-display text-6xl font-bold leading-[0.86] tracking-[-0.07em] text-primary">COMO<br />PEDIR.</h2><div className="mt-10 space-y-7">{[['01', 'MONTA', 'Escolhe tamanho e complementos.'], ['02', 'CONFERE', 'Revê o pedido e quantidades.'], ['03', 'PEDE', 'Continua pelo canal de pedidos da loja.']].map(([number, title, text]) => <div key={number} className="flex gap-5 border-t border-primary/15 pt-5"><span className="font-mono text-xs text-berry">{number}</span><div><h3 className="font-display text-xl font-bold text-primary">{title}</h3><p className="mt-1 text-sm text-primary/65">{text}</p></div></div>)}</div></div><div className="flex flex-col justify-end bg-primary p-7 text-primary-foreground md:p-10"><p className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent">vem buscar o teu</p><h3 className="mt-8 font-display text-5xl font-bold leading-[0.88]">PELOTAS<br /><span className="text-accent">— RS</span></h3><div className="mt-16 border-t border-primary-foreground/20 pt-5"><p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary-foreground/55">Informações demonstrativas</p><p className="mt-3 font-display text-2xl font-bold">18H — 23H</p></div></div></div></section>
+
+      <section className="bg-berry px-5 py-20 text-primary md:px-10 md:py-28"><div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-10 md:flex-row md:items-end"><h2 className="font-display text-7xl font-bold leading-[0.82] tracking-[-0.07em] md:text-9xl">JÁ SABE<br />O QUE VAI?</h2><button onClick={() => setDrawer(true)} className="inline-flex min-h-14 items-center gap-4 bg-primary px-6 text-xs font-bold uppercase tracking-wider text-primary-foreground transition-transform hover:-translate-y-1">Fazer pedido <ArrowUpRight size={17} /></button></div></section>
+      <footer className="bg-primary px-5 py-8 text-primary-foreground md:px-10"><div className="mx-auto flex max-w-7xl flex-col gap-8 md:flex-row md:items-end md:justify-between"><div><div className="font-display text-xl font-bold">ROXO 53</div><div className="mt-1 font-mono text-[9px] tracking-[0.24em] text-primary-foreground/60">AÇAÍ & BOWLS</div></div><p className="max-w-sm text-xs leading-relaxed text-primary-foreground/55">Projeto demonstrativo. Marca, produtos, preços, fotos, horários e canais de pedido são personalizados para cada negócio.</p><p className="font-mono text-[9px] uppercase tracking-[0.2em] text-primary-foreground/40">Desenvolvido por Yagho</p></div></footer>
+
+      {drawer && <div className="fixed inset-0 z-50"><button className="absolute inset-0 bg-primary/50" onClick={() => setDrawer(false)} aria-label="Fechar pedido" /><aside className="absolute right-0 top-0 flex h-full w-full max-w-md flex-col bg-cream text-primary shadow-2xl"><div className="flex items-center justify-between border-b border-primary/15 px-5 py-5"><button onClick={() => setDrawer(false)} className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider"><ChevronDown className="rotate-90" size={16} /> Voltar</button><span className="font-mono text-[10px] uppercase tracking-[0.2em]">Seu pedido</span></div><div className="flex-1 overflow-y-auto px-5 py-6">{cart.length === 0 ? <div className="flex h-full flex-col items-center justify-center text-center"><ShoppingBag className="mb-5 text-berry" size={30} /><h3 className="font-display text-3xl font-bold">Ainda está vazio.</h3><p className="mt-3 max-w-xs text-sm text-primary/60">Monta teu açaí ou escolhe um dos favoritos da casa.</p><button onClick={() => { setDrawer(false); document.getElementById('monte')?.scrollIntoView({ behavior: 'smooth' }) }} className="mt-6 bg-primary px-5 py-3 text-xs font-bold uppercase tracking-wider text-primary-foreground">Montar agora</button></div> : <div className="space-y-5">{cart.map((item) => <div key={item.id} className="flex gap-4 border-b border-primary/10 pb-5"><div className="relative h-20 w-20 shrink-0 overflow-hidden bg-accent">{item.image && <Image src={item.image} alt="" fill className="object-cover" sizes="80px" />}</div><div className="min-w-0 flex-1"><div className="flex justify-between gap-2"><h3 className="font-display text-lg font-bold uppercase">{item.name}</h3><button onClick={() => changeQuantity(item.id, -item.quantity)} className="text-primary/45" aria-label={`Remover ${item.name}`}><X size={15} /></button></div><p className="mt-1 text-xs text-primary/55">{money(item.price)}</p><div className="mt-3 flex items-center gap-3"><button onClick={() => changeQuantity(item.id, -1)} className="flex h-7 w-7 items-center justify-center border border-primary/20" aria-label="Diminuir quantidade"><Minus size={13} /></button><span className="font-mono text-xs">{item.quantity}</span><button onClick={() => changeQuantity(item.id, 1)} className="flex h-7 w-7 items-center justify-center border border-primary/20" aria-label="Aumentar quantidade"><Plus size={13} /></button></div></div></div>)}</div>}</div>{cart.length > 0 && <div className="border-t border-primary/15 px-5 py-5"><div className="mb-5 flex justify-between font-display text-2xl font-bold"><span>Total</span><span>{money(cartTotal)}</span></div><button onClick={() => setDone(true)} className="flex min-h-14 w-full items-center justify-center gap-3 bg-primary text-xs font-bold uppercase tracking-wider text-primary-foreground">Finalizar pedido <ArrowUpRight size={16} /></button></div>}</aside></div>}
+      {done && <div className="fixed inset-0 z-[60] flex items-center justify-center bg-primary/60 px-5"><div className="relative w-full max-w-md bg-cream p-8 text-primary"><button onClick={() => setDone(false)} className="absolute right-5 top-5" aria-label="Fechar"><X size={18} /></button><div className="mb-7 flex h-12 w-12 items-center justify-center bg-accent"><Check size={22} /></div><p className="font-mono text-[10px] uppercase tracking-[0.2em] text-berry">Demonstração</p><h2 className="mt-3 font-display text-4xl font-bold leading-none">Pedido pronto<br />para continuar.</h2><p className="mt-5 text-sm leading-relaxed text-primary/65">Na versão da sua loja, este pedido pode ser enviado diretamente para WhatsApp, iFood, MandaPedido ou outro sistema utilizado pelo negócio.</p><button onClick={() => { setDone(false); setDrawer(false) }} className="mt-7 min-h-12 bg-primary px-5 text-xs font-bold uppercase tracking-wider text-primary-foreground">Voltar ao cardápio</button></div></div>}
     </main>
   )
 }
+
+function OptionGroup({ title, step, children }: { title: string; step: string; children: React.ReactNode }) { return <div><div className="mb-3 flex items-center gap-3"><span className="font-mono text-[10px] text-berry">{step}</span><h3 className="font-display text-xl font-bold text-primary">{title}</h3></div>{children}</div> }
+function ChoiceList({ items, selected, toggle }: { items: string[]; selected: string[]; toggle: (item: string) => void }) { return <div className="flex flex-wrap gap-2">{items.map((item) => <button key={item} onClick={() => toggle(item)} className={`inline-flex min-h-11 items-center gap-2 border px-4 text-sm transition-colors ${selected.includes(item) ? 'border-berry bg-berry text-primary' : 'border-primary/20 text-primary hover:border-primary'}`}>{selected.includes(item) && <Check size={14} />}{item}</button>)}</div> }
