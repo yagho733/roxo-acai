@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from 'next'
 import { Bricolage_Grotesque, DM_Mono, DM_Sans } from 'next/font/google'
 import './globals.css'
 import './premium.css'
+import './photo-fixes.css'
 
 const bricolage = Bricolage_Grotesque({ subsets: ['latin'], variable: '--font-bricolage', display: 'swap' })
 const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-dm-sans', display: 'swap' })
