@@ -1,0 +1,41 @@
+/* Fotografias específicas por produto — todas de bancos com uso gratuito. */
+
+.featured-product-2 .featured-photo {
+  background-image: url('https://images.pexels.com/photos/5232938/pexels-photo-5232938.jpeg?auto=compress&cs=tinysrgb&w=1600');
+  background-size: cover;
+  background-position: center;
+}
+
+.featured-product-2 .featured-photo > img {
+  opacity: 0;
+}
+
+.featured-product-3 .featured-photo {
+  background-image: url('https://images.pexels.com/photos/8230032/pexels-photo-8230032.jpeg?auto=compress&cs=tinysrgb&w=1600');
+  background-size: cover;
+  background-position: center;
+}
+
+.featured-product-3 .featured-photo > img {
+  opacity: 0;
+}
+
+.cart-thumb:has(img[src*='photo-1490324028530']) {
+  background-image: url('https://images.pexels.com/photos/5232938/pexels-photo-5232938.jpeg?auto=compress&cs=tinysrgb&w=700');
+  background-size: cover;
+  background-position: center;
+}
+
+.cart-thumb:has(img[src*='photo-1490324028530']) img {
+  opacity: 0;
+}
+
+.cart-thumb:has(img[src*='photo-1641579719214']) {
+  background-image: url('https://images.pexels.com/photos/8230032/pexels-photo-8230032.jpeg?auto=compress&cs=tinysrgb&w=700');
+  background-size: cover;
+  background-position: center;
+}
+
+.cart-thumb:has(img[src*='photo-1641579719214']) img {
+  opacity: 0;
+}
