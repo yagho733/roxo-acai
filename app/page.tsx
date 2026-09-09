@@ -40,61 +40,66 @@ const products: Product[] = [
     id: 'classico-53',
     name: 'Clássico 53',
     kicker: 'o mais pedido',
-    description: 'Açaí, banana, morango, granola crocante e leite em pó.',
+    description: 'Açaí cremoso, banana, morango, granola e sementes de chia.',
     price: 19.9,
-    image: 'https://images.unsplash.com/photo-1672959202028-51e3b71255bd?auto=format&fit=crop&w=1400&q=88',
+    image: 'https://images.pexels.com/photos/17597421/pexels-photo-17597421.jpeg?auto=compress&cs=tinysrgb&w=1400',
     category: 'Favoritos',
     badge: 'BEST-SELLER',
-    position: 'center 52%',
+    position: 'center',
   },
   {
-    id: 'ninho-morango',
-    name: 'Ninho & Morango',
-    kicker: 'cremoso + frutado',
-    description: 'Açaí, creme de Ninho, morango fresco e leite em pó.',
+    id: 'morango-coco',
+    name: 'Morango & Coco',
+    kicker: 'frutado + leve',
+    description: 'Açaí, morango fresco, mirtilo, granola e coco em flocos.',
     price: 22.9,
-    image: 'https://images.unsplash.com/photo-1490324028530-3df5a9af0637?auto=format&fit=crop&w=1400&q=88',
+    image: 'https://images.pexels.com/photos/5232938/pexels-photo-5232938.jpeg?auto=compress&cs=tinysrgb&w=1400',
     category: 'Favoritos',
-    badge: 'CREMOSO',
+    badge: 'FRESCO',
+    position: 'center',
   },
   {
-    id: 'pacoca-crunch',
-    name: 'Paçoca Crunch',
-    kicker: 'doce na medida',
-    description: 'Açaí, creme de paçoca, banana, granola e farofa de paçoca.',
+    id: 'banana-crunch',
+    name: 'Banana Crunch',
+    kicker: 'cremoso + crocante',
+    description: 'Açaí, banana, frutas frescas, granola, castanhas e creme de amendoim.',
     price: 21.9,
-    image: 'https://images.unsplash.com/photo-1641579719214-534970165dc9?auto=format&fit=crop&w=1400&q=88',
+    image: 'https://images.pexels.com/photos/8230032/pexels-photo-8230032.jpeg?auto=compress&cs=tinysrgb&w=1400',
     category: 'Favoritos',
     badge: 'CROCANTE',
+    position: 'center',
   },
   {
     id: 'duo-53',
     name: 'Duo 53',
     kicker: 'pra dividir. ou não.',
-    description: 'Dois açaís de 500 ml para montar do seu jeito.',
+    description: 'Dois bowls de açaí com frutas, granola e chia.',
     price: 35.9,
-    image: 'https://images.unsplash.com/photo-1627308594190-a057cd4bfac8?auto=format&fit=crop&w=1400&q=88',
+    image: 'https://images.pexels.com/photos/4099234/pexels-photo-4099234.jpeg?auto=compress&cs=tinysrgb&w=1400',
     category: 'Combos',
-    badge: '2X 500 ML',
+    badge: '2 BOWLS',
+    position: 'center',
   },
   {
     id: 'combo-53',
     name: 'Combo 53',
     kicker: 'pedido completo',
-    description: 'Açaí de 500 ml + bebida gelada.',
+    description: 'Bowl de açaí com frutas + bebida gelada para acompanhar.',
     price: 23.9,
-    image: '/images/acai-hero.png',
+    image: 'https://images.pexels.com/photos/4553027/pexels-photo-4553027.jpeg?auto=compress&cs=tinysrgb&w=1400',
     category: 'Combos',
     badge: 'COMBO',
+    position: 'center',
   },
   {
     id: 'mate',
     name: 'Mate Gelado',
-    kicker: 'pra acompanhar',
-    description: 'Mate natural bem gelado, 300 ml.',
+    kicker: 'pra refrescar',
+    description: 'Chá mate gelado com gelo, limão e hortelã.',
     price: 7.9,
-    image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=1000&q=86',
+    image: 'https://images.pexels.com/photos/13293872/pexels-photo-13293872.jpeg?auto=compress&cs=tinysrgb&w=1200',
     category: 'Bebidas',
+    position: 'center',
   },
 ]
 
@@ -225,7 +230,7 @@ export default function Page() {
 
       {menuOpen && (
         <div className="mobile-menu">
-          <div className="mobile-menu-copy">AÇAÍ DO TEU JEITO, SEM CARA DE TEMPLATE.</div>
+          <div className="mobile-menu-copy">AÇAÍ CREMOSO, FRUTA FRESCA E CAMADAS DO TEU JEITO.</div>
           {[
             ['favoritos', 'Favoritos'],
             ['monte', 'Monte o teu'],
@@ -250,7 +255,7 @@ export default function Page() {
             NÃO É SÓ AÇAÍ.<br />
             <em>É O TEU ROXO.</em>
           </h1>
-          <p>Base cremosa, fruta de verdade, crocância e creme em camadas. Escolhe tudo e vê o valor mudar na hora.</p>
+          <p>Açaí cremoso, frutas frescas e combinações feitas do teu jeito. Escolhe as camadas e monta o teu em poucos cliques.</p>
           <div className="hero-actions">
             <button className="btn btn-lime" onClick={() => scrollTo('monte')}>
               Montar meu açaí <ArrowDown size={17} />
@@ -262,7 +267,7 @@ export default function Page() {
           <div className="hero-proof">
             <div><strong>A partir de</strong><b>R$ 14,90</b></div>
             <div><strong>Você escolhe</strong><b>cada camada</b></div>
-            <div><strong>Pedido</strong><b>simples e rápido</b></div>
+            <div><strong>Preparado</strong><b>na hora</b></div>
           </div>
         </div>
         <div className="hero-tag">ROXO 53 · AÇAÍ & BOWLS · ROXO 53 · AÇAÍ & BOWLS ·</div>
@@ -283,7 +288,7 @@ export default function Page() {
               <span className="section-number">01 · FAVORITOS DA CASA</span>
               <h2>Começa pelos<br /><em>que não falham.</em></h2>
             </div>
-            <p>Combinações prontas com cara de produto de marca. Foto grande, descrição curta e pedido em um clique.</p>
+            <p>Três combinações equilibradas para pedir rápido: fruta fresca, textura cremosa e crocância na medida.</p>
           </div>
 
           <div className="featured-grid">
@@ -315,8 +320,8 @@ export default function Page() {
         </div>
         <div className="editorial-panel">
           <span className="section-number">02 · CAMADA POR CAMADA</span>
-          <h2>Visual que<br />dá vontade<br /><em>de pedir.</em></h2>
-          <p>Produto primeiro. Texto enxuto. Contraste alto. O site deixa a comida vender antes de qualquer explicação.</p>
+          <h2>Cremoso.<br />Fresco.<br /><em>Irresistível.</em></h2>
+          <p>Da base de açaí aos complementos, cada camada entra para equilibrar sabor, textura e aquela vontade de repetir.</p>
           <div className="editorial-signature">ROXO / 53</div>
         </div>
       </section>
@@ -326,9 +331,9 @@ export default function Page() {
           <div className="section-head light-head" data-reveal>
             <div>
               <span className="section-number">03 · ROXO LAB</span>
-              <h2>Monte o teu.<br /><em>Preço na hora.</em></h2>
+              <h2>Monte o teu.<br /><em>Do teu jeito.</em></h2>
             </div>
-            <p>Uma experiência de produto de verdade: tamanho, ingredientes, total dinâmico e resumo antes de adicionar ao pedido.</p>
+            <p>Escolhe o tamanho, combina frutas, crocâncias e cremes, e acompanha o valor enquanto monta.</p>
           </div>
 
           <div className="builder" data-reveal>
@@ -377,7 +382,7 @@ export default function Page() {
                 )}
               </div>
               <button className="btn btn-dark full" onClick={addCustom}>Adicionar ao pedido <ShoppingBag size={17} /></button>
-              <small>Valor demonstrativo. Produtos e adicionais são configuráveis.</small>
+              <small>O total é atualizado conforme as escolhas do teu bowl.</small>
             </aside>
           </div>
         </div>
@@ -388,7 +393,7 @@ export default function Page() {
           <div className="section-head menu-head" data-reveal>
             <div>
               <span className="section-number">04 · CARDÁPIO</span>
-              <h2>Poucos cliques.<br /><em>Zero confusão.</em></h2>
+              <h2>Escolhe fácil.<br /><em>Pede melhor.</em></h2>
             </div>
             <div className="menu-tabs" role="tablist">
               {(['Favoritos', 'Combos', 'Bebidas'] as Category[]).map((item) => (
@@ -400,7 +405,7 @@ export default function Page() {
           <div className="menu-cards" data-reveal>
             {visibleProducts.map((product) => (
               <article className="menu-card" key={product.id}>
-                <div className="menu-card-photo"><img src={product.image} alt={product.name} /></div>
+                <div className="menu-card-photo"><img src={product.image} alt={product.name} style={{ objectPosition: product.position || 'center' }} loading="lazy" /></div>
                 <div className="menu-card-copy">
                   <span>{product.kicker}</span>
                   <h3>{product.name}</h3>
@@ -417,16 +422,16 @@ export default function Page() {
         <div className="shell experience-grid">
           <div className="experience-copy" data-reveal>
             <span className="section-number">05 · DO CLIQUE À COLHER</span>
-            <h2>Pedido bom<br />também é<br /><em>experiência.</em></h2>
+            <h2>Seu pedido<br />sem<br /><em>complicação.</em></h2>
             <div className="steps">
               <Step number="01" title="Escolhe" text="Vai nos favoritos ou monta o teu do zero." />
-              <Step number="02" title="Confere" text="Carrinho claro, quantidade e total visíveis." />
-              <Step number="03" title="Pede" text="O checkout pode ser ligado ao WhatsApp, iFood ou sistema da loja." />
+              <Step number="02" title="Confere" text="Revê os itens, quantidades e o total do pedido." />
+              <Step number="03" title="Finaliza" text="Deixa tudo pronto para seguir pelo canal de atendimento da loja." />
             </div>
           </div>
           <div className="experience-photo" data-reveal>
-            <img src="https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?auto=format&fit=crop&w=1500&q=88" alt="Frutas frescas em preparação" />
-            <div className="floating-note"><Star size={15} fill="currentColor" /> produto em primeiro plano</div>
+            <img src="https://images.pexels.com/photos/12273052/pexels-photo-12273052.jpeg?auto=compress&cs=tinysrgb&w=1500" alt="Bowl de açaí com frutas e granola" />
+            <div className="floating-note"><Star size={15} fill="currentColor" /> fruta fresca + textura cremosa</div>
           </div>
         </div>
       </section>
@@ -436,9 +441,9 @@ export default function Page() {
           <div className="store-card">
             <span className="section-number">PELOTAS · RS</span>
             <h2>ROXO 53</h2>
-            <p>Informações demonstrativas para apresentar a experiência completa antes da personalização do cliente.</p>
+            <p>Açaí preparado na hora, combinações da casa e liberdade para montar cada camada do teu jeito.</p>
             <div className="store-info">
-              <div><MapPin size={20} /><span>Pelotas, Rio Grande do Sul<small>Endereço configurável</small></span></div>
+              <div><MapPin size={20} /><span>Pelotas, Rio Grande do Sul<small>Retirada + delivery</small></span></div>
               <div><Clock3 size={20} /><span>18h — 23h<small>Todos os dias</small></span></div>
             </div>
             <button className="btn btn-lime" onClick={() => setDrawerOpen(true)}>Começar pedido <ArrowRight size={17} /></button>
@@ -462,7 +467,7 @@ export default function Page() {
       <footer>
         <div className="shell footer-grid">
           <div className="footer-brand"><strong>ROXO 53</strong><span>AÇAÍ & BOWLS</span></div>
-          <p>Projeto demonstrativo. Marca, preços, fotos, horários, endereço e canais de pedido podem ser personalizados para cada negócio.</p>
+          <p>Açaí cremoso, frutas frescas e combinações feitas do teu jeito. Do primeiro clique à última colherada.</p>
           <div className="footer-credit">DESENVOLVIDO POR YAGHO</div>
         </div>
       </footer>
@@ -584,10 +589,10 @@ function CartDrawer({
               {ready ? (
                 <div className="checkout-note">
                   <Check size={18} />
-                  <div><strong>Pedido pronto para integração.</strong><p>Na versão do cliente, este botão envia o resumo para WhatsApp, iFood ou checkout próprio.</p></div>
+                  <div><strong>Pedido revisado.</strong><p>Os itens estão organizados e prontos para seguir pelo canal de atendimento da loja.</p></div>
                 </div>
               ) : (
-                <button className="btn btn-dark full" onClick={onCheckout}>Finalizar pedido <ArrowRight size={17} /></button>
+                <button className="btn btn-dark full" onClick={onCheckout}>Revisar pedido <ArrowRight size={17} /></button>
               )}
               <button className="continue-link" onClick={onContinue}>Continuar escolhendo</button>
             </>
