@@ -1,14 +1,13 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Bricolage_Grotesque, DM_Mono, DM_Sans } from 'next/font/google'
-import CartTools from './cart-tools'
 import './globals.css'
 import './premium.css'
 import './photo-fixes.css'
 import './roxo53.css'
 import './final-polish.css'
 import './brand-upgrade.css'
-import './cart-tools.css'
+import './order-flow.css'
 
 const bricolage = Bricolage_Grotesque({ subsets: ['latin'], variable: '--font-bricolage', display: 'swap' })
 const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-dm-sans', display: 'swap' })
@@ -49,7 +48,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="pt-BR">
       <body className={`${bricolage.variable} ${dmSans.variable} ${dmMono.variable} antialiased`}>
         {children}
-        <CartTools />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

@@ -19,6 +19,7 @@ import {
   ShoppingBag,
   Sparkles,
   Star,
+  Trash2,
   X,
 } from 'lucide-react'
 
@@ -34,79 +35,29 @@ type Product = {
   badge?: string
   position?: string
 }
-type CartItem = Product & { quantity: number }
+type CartItem = Product & { quantity: number; note?: string }
 type Choice = { name: string; extra: number }
-type ConfirmedOrder = { items: CartItem[]; total: number }
+type Fulfillment = 'Retirada' | 'Delivery'
+type Payment = 'Pix' | 'Cartão' | 'Dinheiro'
+type CheckoutDetails = {
+  fulfillment: Fulfillment
+  payment: Payment
+  address: string
+  changeFor: string
+  orderNote: string
+}
+type ConfirmedOrder = CheckoutDetails & { items: CartItem[]; total: number }
 
 const WHATSAPP_NUMBER = '5553999563554'
 const money = (value: number) => `R$ ${value.toFixed(2).replace('.', ',')}`
 
 const products: Product[] = [
-  {
-    id: 'classico-53',
-    name: 'Clássico 53',
-    kicker: 'o mais pedido',
-    description: 'Açaí cremoso, banana, morango, granola e sementes de chia.',
-    price: 19.9,
-    image: 'https://images.pexels.com/photos/17597421/pexels-photo-17597421.jpeg?auto=compress&cs=tinysrgb&w=1400',
-    category: 'Favoritos',
-    badge: 'BEST-SELLER',
-    position: 'center',
-  },
-  {
-    id: 'morango-coco',
-    name: 'Morango & Coco',
-    kicker: 'frutado + leve',
-    description: 'Açaí, morango fresco, mirtilo, granola e coco em flocos.',
-    price: 22.9,
-    image: 'https://images.pexels.com/photos/5232938/pexels-photo-5232938.jpeg?auto=compress&cs=tinysrgb&w=1400',
-    category: 'Favoritos',
-    badge: 'FRESCO',
-    position: 'center',
-  },
-  {
-    id: 'banana-crunch',
-    name: 'Banana Crunch',
-    kicker: 'cremoso + crocante',
-    description: 'Açaí, banana, frutas frescas, granola, castanhas e creme de amendoim.',
-    price: 21.9,
-    image: 'https://images.pexels.com/photos/8230032/pexels-photo-8230032.jpeg?auto=compress&cs=tinysrgb&w=1400',
-    category: 'Favoritos',
-    badge: 'CROCANTE',
-    position: 'center',
-  },
-  {
-    id: 'duo-53',
-    name: 'Duo 53',
-    kicker: 'pra dividir. ou não.',
-    description: 'Dois bowls de açaí com frutas, granola e chia.',
-    price: 35.9,
-    image: 'https://images.pexels.com/photos/4099234/pexels-photo-4099234.jpeg?auto=compress&cs=tinysrgb&w=1400',
-    category: 'Combos',
-    badge: '2 BOWLS',
-    position: 'center',
-  },
-  {
-    id: 'combo-53',
-    name: 'Combo 53',
-    kicker: 'pedido completo',
-    description: 'Bowl de açaí com frutas + bebida gelada para acompanhar.',
-    price: 23.9,
-    image: 'https://images.pexels.com/photos/4553027/pexels-photo-4553027.jpeg?auto=compress&cs=tinysrgb&w=1400',
-    category: 'Combos',
-    badge: 'COMBO',
-    position: 'center',
-  },
-  {
-    id: 'mate',
-    name: 'Mate Gelado',
-    kicker: 'pra refrescar',
-    description: 'Chá mate gelado com gelo, limão e hortelã.',
-    price: 7.9,
-    image: 'https://images.pexels.com/photos/13293872/pexels-photo-13293872.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    category: 'Bebidas',
-    position: 'center',
-  },
+  { id: 'classico-53', name: 'Clássico 53', kicker: 'o mais pedido', description: 'Açaí cremoso, banana, morango, granola e sementes de chia.', price: 19.9, image: 'https://images.pexels.com/photos/17597421/pexels-photo-17597421.jpeg?auto=compress&cs=tinysrgb&w=1400', category: 'Favoritos', badge: 'BEST-SELLER', position: 'center' },
+  { id: 'morango-coco', name: 'Morango & Coco', kicker: 'frutado + leve', description: 'Açaí, morango fresco, mirtilo, granola e coco em flocos.', price: 22.9, image: 'https://images.pexels.com/photos/5232938/pexels-photo-5232938.jpeg?auto=compress&cs=tinysrgb&w=1400', category: 'Favoritos', badge: 'FRESCO', position: 'center' },
+  { id: 'banana-crunch', name: 'Banana Crunch', kicker: 'cremoso + crocante', description: 'Açaí, banana, frutas frescas, granola, castanhas e creme de amendoim.', price: 21.9, image: 'https://images.pexels.com/photos/8230032/pexels-photo-8230032.jpeg?auto=compress&cs=tinysrgb&w=1400', category: 'Favoritos', badge: 'CROCANTE', position: 'center' },
+  { id: 'duo-53', name: 'Duo 53', kicker: 'pra dividir. ou não.', description: 'Dois bowls de açaí com frutas, granola e chia.', price: 35.9, image: 'https://images.pexels.com/photos/4099234/pexels-photo-4099234.jpeg?auto=compress&cs=tinysrgb&w=1400', category: 'Combos', badge: '2 BOWLS', position: 'center' },
+  { id: 'combo-53', name: 'Combo 53', kicker: 'pedido completo', description: 'Bowl de açaí com frutas + bebida gelada para acompanhar.', price: 23.9, image: 'https://images.pexels.com/photos/4553027/pexels-photo-4553027.jpeg?auto=compress&cs=tinysrgb&w=1400', category: 'Combos', badge: 'COMBO', position: 'center' },
+  { id: 'mate', name: 'Mate Gelado', kicker: 'pra refrescar', description: 'Chá mate gelado com gelo, limão e hortelã.', price: 7.9, image: 'https://images.pexels.com/photos/13293872/pexels-photo-13293872.jpeg?auto=compress&cs=tinysrgb&w=1200', category: 'Bebidas', position: 'center' },
 ]
 
 const sizes: Choice[] = [
@@ -119,22 +70,29 @@ const crunch: Choice[] = ['Granola', 'Paçoca', 'Leite em pó', 'Gotas de chocol
 const creams: Choice[] = ['Creme de Ninho', 'Creme de paçoca', 'Creme de chocolate'].map((name) => ({ name, extra: 2.5 }))
 
 const faq = [
-  ['Como funciona o Monte o teu?', 'Escolhe o tamanho, adiciona frutas, crocâncias e cremes e acompanha o valor atualizado antes de colocar no pedido.'],
-  ['As frutas têm valor adicional?', 'Neste cardápio, banana, morango e kiwi estão incluídos na montagem. Crocâncias e cremes mostram o adicional ao lado de cada opção.'],
-  ['Posso pedir para retirada ou delivery?', 'Sim. Depois de confirmar o carrinho, o site abre o WhatsApp com o pedido completo para combinar retirada ou entrega.'],
-  ['Como finalizo o pedido?', 'Revê o carrinho, confirma os itens e então toca em Enviar pedido no WhatsApp. A mensagem já vai com produtos, quantidades, detalhes e total.'],
+  ['Como funciona o Monte o teu?', 'Escolhe o tamanho, adiciona frutas, crocâncias e cremes e acompanha o valor antes de colocar no pedido.'],
+  ['As frutas têm valor adicional?', 'Banana, morango e kiwi estão incluídos na montagem. Crocâncias e cremes mostram o adicional ao lado de cada opção.'],
+  ['Posso pedir para retirada ou delivery?', 'Sim. No fechamento você escolhe retirada ou delivery. Para delivery, o endereço vai junto no pedido enviado pelo WhatsApp.'],
+  ['Quais formas de pagamento aparecem no pedido?', 'Pix, cartão ou dinheiro. Se escolher dinheiro, dá para informar o valor para troco antes de confirmar.'],
   ['E sobre alergênicos?', 'Alguns complementos podem conter leite, amendoim, castanhas, soja ou glúten. Confirme ingredientes e restrições no atendimento antes de finalizar.'],
 ]
 
 function buildOrderMessage(order: ConfirmedOrder) {
-  const items = order.items
-    .map((item) => {
-      const subtotal = item.price * item.quantity
-      return `${item.quantity}x ${item.name} — ${money(subtotal)}\n${item.description}`
-    })
-    .join('\n\n')
+  const items = order.items.map((item) => {
+    const subtotal = item.price * item.quantity
+    const note = item.note?.trim() ? `\nObs. do item: ${item.note.trim()}` : ''
+    return `${item.quantity}x ${item.name} — ${money(subtotal)}\n${item.description}${note}`
+  }).join('\n\n')
 
-  return `Olá! Quero fazer este pedido na ROXO 53:\n\n${items}\n\nTotal do pedido: ${money(order.total)}\n\nPode confirmar meu pedido, por favor?`
+  const fulfillment = order.fulfillment === 'Delivery'
+    ? `Delivery\nEndereço: ${order.address.trim()}`
+    : 'Retirada na loja'
+  const change = order.payment === 'Dinheiro' && order.changeFor.trim()
+    ? `\nTroco para: ${order.changeFor.trim()}`
+    : ''
+  const generalNote = order.orderNote.trim() ? `\nObservação geral: ${order.orderNote.trim()}` : ''
+
+  return `Olá! Quero fazer este pedido na ROXO 53:\n\n${items}\n\nForma de recebimento: ${fulfillment}\nPagamento: ${order.payment}${change}${generalNote}\n\nTotal dos produtos: ${money(order.total)}\n\nPode confirmar o pedido e, se for delivery, o valor da entrega?`
 }
 
 function whatsappUrl(order: ConfirmedOrder) {
@@ -149,6 +107,13 @@ export default function Page() {
   const [size, setSize] = useState<Choice>(sizes[1])
   const [choices, setChoices] = useState<Choice[]>([])
   const [confirmedOrder, setConfirmedOrder] = useState<ConfirmedOrder | null>(null)
+  const [fulfillment, setFulfillment] = useState<Fulfillment>('Retirada')
+  const [payment, setPayment] = useState<Payment>('Pix')
+  const [address, setAddress] = useState('')
+  const [changeFor, setChangeFor] = useState('')
+  const [orderNote, setOrderNote] = useState('')
+  const [checkoutError, setCheckoutError] = useState('')
+  const [toast, setToast] = useState('')
 
   const visibleProducts = useMemo(() => products.filter((product) => product.category === category), [category])
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0)
@@ -174,21 +139,31 @@ export default function Page() {
     return () => observer.disconnect()
   }, [])
 
-  const invalidateConfirmation = () => setConfirmedOrder(null)
+  useEffect(() => {
+    if (!toast) return
+    const timer = window.setTimeout(() => setToast(''), 2600)
+    return () => window.clearTimeout(timer)
+  }, [toast])
+
+  const invalidateConfirmation = () => {
+    setConfirmedOrder(null)
+    setCheckoutError('')
+  }
 
   const scrollTo = (id: string) => {
     setMenuOpen(false)
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
   }
 
-  const addToCart = (product: Product, open = true) => {
+  const addToCart = (product: Product, open = false) => {
     invalidateConfirmation()
     setCart((current) => {
       const existing = current.find((item) => item.id === product.id)
       return existing
         ? current.map((item) => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item)
-        : [...current, { ...product, quantity: 1 }]
+        : [...current, { ...product, quantity: 1, note: '' }]
     })
+    setToast(`${product.name} foi adicionado ao pedido.`)
     if (open) setDrawerOpen(true)
   }
 
@@ -215,6 +190,19 @@ export default function Page() {
     }))
   }
 
+  const updateItemNote = (id: string, note: string) => {
+    invalidateConfirmation()
+    setCart((current) => current.map((item) => item.id === id ? { ...item, note } : item))
+  }
+
+  const clearCart = () => {
+    if (!window.confirm('Esvaziar todos os itens do carrinho?')) return
+    setCart([])
+    setConfirmedOrder(null)
+    setCheckoutError('')
+    setToast('Carrinho esvaziado.')
+  }
+
   const toggleChoice = (choice: Choice) => {
     setChoices((current) => current.some((item) => item.name === choice.name)
       ? current.filter((item) => item.name !== choice.name)
@@ -223,7 +211,20 @@ export default function Page() {
 
   const confirmOrder = () => {
     if (!cart.length) return
-    setConfirmedOrder({ items: cart.map((item) => ({ ...item })), total: cartTotal })
+    if (fulfillment === 'Delivery' && !address.trim()) {
+      setCheckoutError('Informe o endereço para confirmar o delivery.')
+      return
+    }
+    setCheckoutError('')
+    setConfirmedOrder({
+      items: cart.map((item) => ({ ...item })),
+      total: cartTotal,
+      fulfillment,
+      payment,
+      address: address.trim(),
+      changeFor: changeFor.trim(),
+      orderNote: orderNote.trim(),
+    })
   }
 
   return (
@@ -287,12 +288,12 @@ export default function Page() {
           <div className="why-intro" data-reveal>
             <span className="section-number">01 · POR QUE ROXO</span>
             <h2>Mais sabor.<br /><em>Menos enrolação.</em></h2>
-            <p>Do produto ao pedido, tudo foi pensado para deixar a escolha simples e o bowl com a tua cara.</p>
+            <p>Açaí cremoso, frutas frescas e complementos para combinar sem complicar.</p>
           </div>
           <div className="why-grid" data-reveal>
             <WhyCard icon={<Leaf size={24} />} number="01" title="Fruta em destaque" text="Combinações em que fruta, açaí e textura aparecem de verdade em cada camada." />
             <WhyCard icon={<Layers3 size={24} />} number="02" title="Montagem livre" text="Escolhe tamanho, frutas, crocâncias e cremes com o preço atualizado na hora." />
-            <WhyCard icon={<ShieldCheck size={24} />} number="03" title="Pedido conferido" text="Antes do WhatsApp, o carrinho trava uma versão confirmada com itens, quantidades e total." />
+            <WhyCard icon={<ShieldCheck size={24} />} number="03" title="Pedido sem surpresa" text="Você confere tudo antes de enviar: itens, quantidades, observações e total dos produtos." />
           </div>
         </div>
       </section>
@@ -347,39 +348,28 @@ export default function Page() {
           <div className="menu-cards" data-reveal>{visibleProducts.map((product) => <article className="menu-card" key={product.id}><div className="menu-card-photo"><img src={product.image} alt={product.name} style={{ objectPosition: product.position || 'center' }} loading="lazy" /></div><div className="menu-card-copy"><span>{product.kicker}</span><h3>{product.name}</h3><p>{product.description}</p><div><strong>{money(product.price)}</strong><button onClick={() => addToCart(product)}>Adicionar <Plus size={16} /></button></div></div></article>)}</div>
 
           <div className="extras-block" data-reveal>
-            <div className="extras-copy"><span className="section-number">EXTRAS DA MONTAGEM</span><h3>Mais camada,<br />mais teu.</h3><p>O cardápio fica mais completo sem poluir as fotos: os adicionais aparecem com preço claro e entram direto no total do ROXO LAB.</p></div>
-            <div className="extras-lists">
-              <Extras title="Frutas incluídas" items={fruits} />
-              <Extras title="Crocâncias" items={crunch} />
-              <Extras title="Cremes" items={creams} />
-            </div>
+            <div className="extras-copy"><span className="section-number">EXTRAS DA MONTAGEM</span><h3>Mais camada,<br />mais teu.</h3><p>Frutas entram sem adicional, e cada crocância ou creme mostra o preço antes de você escolher.</p></div>
+            <div className="extras-lists"><Extras title="Frutas incluídas" items={fruits} /><Extras title="Crocâncias" items={crunch} /><Extras title="Cremes" items={creams} /></div>
           </div>
         </div>
       </section>
 
       <section className="lifestyle-section">
         <div className="shell lifestyle-grid">
-          <div className="lifestyle-copy" data-reveal><span className="section-number">06 · DO BALCÃO AO DELIVERY</span><h2>A cara do<br /><em>ROXO.</em></h2><p>Uma marca de comida fica mais forte quando mostra produto, preparo e momento de consumo — não só cardápio.</p><div className="lifestyle-tags"><span>feito na hora</span><span>camadas visíveis</span><span>pedido rápido</span></div></div>
-          <div className="lifestyle-photos" data-reveal>
-            <figure className="life-photo life-photo-a"><img src="/images/acai-bowl.png" alt="Bowl de açaí ROXO 53" /></figure>
-            <figure className="life-photo life-photo-b"><img src="https://images.pexels.com/photos/12273052/pexels-photo-12273052.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Açaí com frutas e granola" /></figure>
-            <figure className="life-photo life-photo-c"><img src="/images/acai-closeup.png" alt="Detalhe de açaí em camadas" /></figure>
-          </div>
+          <div className="lifestyle-copy" data-reveal><span className="section-number">06 · DO BALCÃO AO DELIVERY</span><h2>A cara do<br /><em>ROXO.</em></h2><p>Camadas bem montadas, fruta aparecendo e aquele açaí que já chega bonito antes da primeira colherada.</p><div className="lifestyle-tags"><span>feito na hora</span><span>camadas visíveis</span><span>pedido rápido</span></div></div>
+          <div className="lifestyle-photos" data-reveal><figure className="life-photo life-photo-a"><img src="/images/acai-bowl.png" alt="Bowl de açaí ROXO 53" /></figure><figure className="life-photo life-photo-b"><img src="https://images.pexels.com/photos/12273052/pexels-photo-12273052.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Açaí com frutas e granola" /></figure><figure className="life-photo life-photo-c"><img src="/images/acai-closeup.png" alt="Detalhe de açaí em camadas" /></figure></div>
         </div>
       </section>
 
       <section className="experience-section">
         <div className="shell experience-grid">
-          <div className="experience-copy" data-reveal><span className="section-number">07 · DO CLIQUE À COLHER</span><h2>Seu pedido<br />sem<br /><em>complicação.</em></h2><div className="steps"><Step number="01" title="Escolhe" text="Vai nos favoritos ou monta o teu do zero." /><Step number="02" title="Confere" text="Revê itens, quantidades e total antes de confirmar." /><Step number="03" title="Envia" text="Depois da confirmação, o WhatsApp abre com exatamente o pedido que foi fechado." /></div></div>
+          <div className="experience-copy" data-reveal><span className="section-number">07 · DO CLIQUE À COLHER</span><h2>Seu pedido<br />sem<br /><em>complicação.</em></h2><div className="steps"><Step number="01" title="Escolhe" text="Vai nos favoritos ou monta o teu do zero." /><Step number="02" title="Confere" text="Revê itens, observações, recebimento, pagamento e total." /><Step number="03" title="Envia" text="O WhatsApp abre com o pedido pronto para a loja confirmar." /></div></div>
           <div className="experience-photo" data-reveal><img src="https://images.pexels.com/photos/12273052/pexels-photo-12273052.jpeg?auto=compress&cs=tinysrgb&w=1500" alt="Bowl de açaí com frutas e granola" /><div className="floating-note"><Star size={15} fill="currentColor" /> fruta fresca + textura cremosa</div></div>
         </div>
       </section>
 
       <section id="faq" className="section faq-section">
-        <div className="shell faq-grid">
-          <div className="faq-title" data-reveal><span className="section-number">08 · DÚVIDAS RÁPIDAS</span><h2>Antes de<br /><em>pedir.</em></h2><p>O essencial fica claro antes do cliente abrir o WhatsApp.</p></div>
-          <div className="faq-list" data-reveal>{faq.map(([question, answer]) => <details key={question}><summary><span>{question}</span><ChevronDown size={18} /></summary><p>{answer}</p></details>)}</div>
-        </div>
+        <div className="shell faq-grid"><div className="faq-title" data-reveal><span className="section-number">08 · DÚVIDAS RÁPIDAS</span><h2>Antes de<br /><em>pedir.</em></h2><p>Escolha, pagamento e entrega explicados sem complicação.</p></div><div className="faq-list" data-reveal>{faq.map(([question, answer]) => <details key={question}><summary><span>{question}</span><ChevronDown size={18} /></summary><p>{answer}</p></details>)}</div></div>
       </section>
 
       <section id="loja" className="store-section">
@@ -395,7 +385,31 @@ export default function Page() {
 
       <button className={cartCount ? 'floating-cart visible' : 'floating-cart'} onClick={() => setDrawerOpen(true)}><ShoppingBag size={18} /><span>{cartCount} {cartCount === 1 ? 'item' : 'itens'}</span><strong>{money(cartTotal)}</strong></button>
 
-      {drawerOpen && <CartDrawer items={cart} total={cartTotal} confirmed={confirmedOrder} onClose={() => setDrawerOpen(false)} onQuantity={updateQuantity} onConfirm={confirmOrder} onEdit={() => setConfirmedOrder(null)} onContinue={() => { setConfirmedOrder(null); setDrawerOpen(false); requestAnimationFrame(() => scrollTo('cardapio')) }} />}
+      {toast && <div className="cart-toast" role="status"><div><Check size={16} /><span>{toast}</span></div>{cart.length > 0 && <button onClick={() => setDrawerOpen(true)}>Ver pedido</button>}</div>}
+
+      {drawerOpen && <CartDrawer
+        items={cart}
+        total={cartTotal}
+        confirmed={confirmedOrder}
+        fulfillment={fulfillment}
+        payment={payment}
+        address={address}
+        changeFor={changeFor}
+        orderNote={orderNote}
+        checkoutError={checkoutError}
+        onClose={() => setDrawerOpen(false)}
+        onQuantity={updateQuantity}
+        onItemNote={updateItemNote}
+        onClear={clearCart}
+        onFulfillment={(value) => { invalidateConfirmation(); setFulfillment(value) }}
+        onPayment={(value) => { invalidateConfirmation(); setPayment(value) }}
+        onAddress={(value) => { invalidateConfirmation(); setAddress(value) }}
+        onChangeFor={(value) => { invalidateConfirmation(); setChangeFor(value) }}
+        onOrderNote={(value) => { invalidateConfirmation(); setOrderNote(value) }}
+        onConfirm={confirmOrder}
+        onEdit={() => setConfirmedOrder(null)}
+        onContinue={() => { setConfirmedOrder(null); setDrawerOpen(false); requestAnimationFrame(() => scrollTo('cardapio')) }}
+      />}
     </main>
   )
 }
@@ -423,12 +437,47 @@ function Step({ number, title, text }: { number: string; title: string; text: st
   return <div className="step"><span>{number}</span><div><h3>{title}</h3><p>{text}</p></div></div>
 }
 
-function CartDrawer({ items, total, confirmed, onClose, onQuantity, onConfirm, onEdit, onContinue }: {
+function CartDrawer({
+  items,
+  total,
+  confirmed,
+  fulfillment,
+  payment,
+  address,
+  changeFor,
+  orderNote,
+  checkoutError,
+  onClose,
+  onQuantity,
+  onItemNote,
+  onClear,
+  onFulfillment,
+  onPayment,
+  onAddress,
+  onChangeFor,
+  onOrderNote,
+  onConfirm,
+  onEdit,
+  onContinue,
+}: {
   items: CartItem[]
   total: number
   confirmed: ConfirmedOrder | null
+  fulfillment: Fulfillment
+  payment: Payment
+  address: string
+  changeFor: string
+  orderNote: string
+  checkoutError: string
   onClose: () => void
   onQuantity: (id: string, amount: number) => void
+  onItemNote: (id: string, note: string) => void
+  onClear: () => void
+  onFulfillment: (value: Fulfillment) => void
+  onPayment: (value: Payment) => void
+  onAddress: (value: string) => void
+  onChangeFor: (value: string) => void
+  onOrderNote: (value: string) => void
   onConfirm: () => void
   onEdit: () => void
   onContinue: () => void
@@ -442,9 +491,51 @@ function CartDrawer({ items, total, confirmed, onClose, onQuantity, onConfirm, o
       <div className="drawer-head"><div><span>ROXO 53</span><h2>{confirmed ? 'Pedido confirmado' : 'Seu pedido'}</h2></div><button onClick={onClose} aria-label="Fechar"><X size={22} /></button></div>
       <div className="drawer-body">
         {shownItems.length === 0 ? <div className="empty-cart"><div><ShoppingBag size={28} /></div><h3>Ainda tá vazio.</h3><p>Escolhe um favorito ou monta teu açaí do zero.</p><button className="btn btn-dark" onClick={onContinue}>Ver cardápio <ArrowRight size={16} /></button></div> : <>
-          <div className="cart-list">{shownItems.map((item) => <article className="cart-item" key={item.id}><div className="cart-thumb"><img src={item.image} alt="" /></div><div className="cart-copy"><span>{item.kicker}</span><h3>{item.name}</h3><p>{item.description}</p><strong>{money(item.price * item.quantity)}</strong></div>{confirmed ? <div className="confirmed-qty">{item.quantity}x</div> : <div className="quantity"><button onClick={() => onQuantity(item.id, -1)} aria-label="Diminuir"><Minus size={14} /></button><span>{item.quantity}</span><button onClick={() => onQuantity(item.id, 1)} aria-label="Aumentar"><Plus size={14} /></button></div>}</article>)}</div>
-          <div className="drawer-total"><span>Total</span><strong>{money(shownTotal)}</strong></div>
-          {confirmed ? <div className="confirmed-actions"><div className="checkout-note"><Check size={18} /><div><strong>Confira uma última vez.</strong><p>Este é o pedido que será enviado para o WhatsApp. Os valores e quantidades estão travados nesta confirmação.</p></div></div><a className="btn btn-whatsapp full" href={whatsappUrl(confirmed)} target="_blank" rel="noreferrer"><MessageCircle size={18} /> Enviar pedido no WhatsApp</a><button className="continue-link" onClick={onEdit}>Voltar e editar pedido</button></div> : <><button className="btn btn-dark full" onClick={onConfirm}>Confirmar pedido <Check size={17} /></button><button className="continue-link" onClick={onContinue}>Continuar escolhendo</button></>}
+          <div className="cart-list">{shownItems.map((item) => <article className="cart-item" key={item.id}>
+            <div className="cart-thumb"><img src={item.image} alt="" /></div>
+            <div className="cart-copy"><span>{item.kicker}</span><h3>{item.name}</h3><p>{item.description}</p><strong>{money(item.price * item.quantity)}</strong>{confirmed ? item.note?.trim() && <small className="confirmed-note">Obs.: {item.note}</small> : <textarea className="item-note" value={item.note || ''} onChange={(event) => onItemNote(item.id, event.target.value)} placeholder="Observação do item: sem granola, pouco creme..." rows={2} />}</div>
+            {confirmed ? <div className="confirmed-qty">{item.quantity}x</div> : <div className="quantity"><button onClick={() => onQuantity(item.id, -1)} aria-label="Diminuir"><Minus size={14} /></button><span>{item.quantity}</span><button onClick={() => onQuantity(item.id, 1)} aria-label="Aumentar"><Plus size={14} /></button></div>}
+          </article>)}</div>
+
+          <div className="drawer-total"><span>Total dos produtos</span><strong>{money(shownTotal)}</strong></div>
+
+          {confirmed ? <div className="confirmed-actions">
+            <div className="confirmed-meta">
+              <div><span>Recebimento</span><strong>{confirmed.fulfillment}</strong></div>
+              {confirmed.fulfillment === 'Delivery' && <div><span>Endereço</span><strong>{confirmed.address}</strong></div>}
+              <div><span>Pagamento</span><strong>{confirmed.payment}</strong></div>
+              {confirmed.payment === 'Dinheiro' && confirmed.changeFor && <div><span>Troco para</span><strong>{confirmed.changeFor}</strong></div>}
+              {confirmed.orderNote && <div><span>Observação</span><strong>{confirmed.orderNote}</strong></div>}
+            </div>
+            <div className="checkout-note"><Check size={18} /><div><strong>Confira uma última vez.</strong><p>O WhatsApp vai receber exatamente estas informações. Em delivery, a taxa é confirmada pela loja.</p></div></div>
+            <a className="btn btn-whatsapp full" href={whatsappUrl(confirmed)} target="_blank" rel="noreferrer"><MessageCircle size={18} /> Enviar pedido no WhatsApp</a>
+            <button className="continue-link" onClick={onEdit}>Voltar e editar pedido</button>
+          </div> : <>
+            <button className="clear-cart-native" onClick={onClear}><Trash2 size={15} /> Esvaziar carrinho</button>
+
+            <div className="checkout-form">
+              <div className="checkout-field">
+                <label>Como você quer receber?</label>
+                <div className="checkout-segmented">{(['Retirada', 'Delivery'] as Fulfillment[]).map((item) => <button key={item} className={fulfillment === item ? 'active' : ''} onClick={() => onFulfillment(item)}>{item}</button>)}</div>
+              </div>
+
+              {fulfillment === 'Delivery' && <div className="checkout-field"><label htmlFor="delivery-address">Endereço para entrega</label><input id="delivery-address" value={address} onChange={(event) => onAddress(event.target.value)} placeholder="Rua, número, bairro e complemento" autoComplete="street-address" /></div>}
+
+              <div className="checkout-field">
+                <label>Forma de pagamento</label>
+                <div className="checkout-segmented three">{(['Pix', 'Cartão', 'Dinheiro'] as Payment[]).map((item) => <button key={item} className={payment === item ? 'active' : ''} onClick={() => onPayment(item)}>{item}</button>)}</div>
+              </div>
+
+              {payment === 'Dinheiro' && <div className="checkout-field"><label htmlFor="change-for">Precisa de troco?</label><input id="change-for" value={changeFor} onChange={(event) => onChangeFor(event.target.value)} placeholder="Ex.: troco para R$ 50" inputMode="decimal" /></div>}
+
+              <div className="checkout-field"><label htmlFor="order-note">Observação geral <small>opcional</small></label><textarea id="order-note" value={orderNote} onChange={(event) => onOrderNote(event.target.value)} placeholder="Ex.: interfone não funciona, chamar no WhatsApp" rows={3} /></div>
+
+              {checkoutError && <p className="checkout-error" role="alert">{checkoutError}</p>}
+            </div>
+
+            <button className="btn btn-dark full" onClick={onConfirm}>Confirmar pedido <Check size={17} /></button>
+            <button className="continue-link" onClick={onContinue}>Continuar escolhendo</button>
+          </>}
         </>}
       </div>
     </aside>
