@@ -10,6 +10,7 @@ import './final-polish.css'
 import './brand-upgrade.css'
 import './order-flow.css'
 import './store-map.css'
+import './mobile-final.css'
 
 const bricolage = Bricolage_Grotesque({ subsets: ['latin'], variable: '--font-bricolage', display: 'swap' })
 const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-dm-sans', display: 'swap' })

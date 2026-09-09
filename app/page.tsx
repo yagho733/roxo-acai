@@ -357,14 +357,14 @@ export default function Page() {
       <section className="lifestyle-section">
         <div className="shell lifestyle-grid">
           <div className="lifestyle-copy" data-reveal><span className="section-number">06 · DO BALCÃO AO DELIVERY</span><h2>A cara do<br /><em>ROXO.</em></h2><p>Camadas bem montadas, fruta aparecendo e aquele açaí que já chega bonito antes da primeira colherada.</p><div className="lifestyle-tags"><span>feito na hora</span><span>camadas visíveis</span><span>pedido rápido</span></div></div>
-          <div className="lifestyle-photos" data-reveal><figure className="life-photo life-photo-a"><img src="/images/acai-bowl.png" alt="Bowl de açaí ROXO 53" /></figure><figure className="life-photo life-photo-b"><img src="https://images.pexels.com/photos/12273052/pexels-photo-12273052.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Açaí com frutas e granola" /></figure><figure className="life-photo life-photo-c"><img src="/images/acai-closeup.png" alt="Detalhe de açaí em camadas" /></figure></div>
+          <div className="lifestyle-photos" data-reveal><figure className="life-photo life-photo-a"><img src="/images/acai-bowl.png" alt="Bowl de açaí ROXO 53" /></figure><figure className="life-photo life-photo-b"><img src="https://images.pexels.com/photos/5232938/pexels-photo-5232938.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Açaí com frutas e granola" /></figure><figure className="life-photo life-photo-c"><img src="/images/acai-closeup.png" alt="Detalhe de açaí em camadas" /></figure></div>
         </div>
       </section>
 
       <section className="experience-section">
         <div className="shell experience-grid">
           <div className="experience-copy" data-reveal><span className="section-number">07 · DO CLIQUE À COLHER</span><h2>Seu pedido<br />sem<br /><em>complicação.</em></h2><div className="steps"><Step number="01" title="Escolhe" text="Vai nos favoritos ou monta o teu do zero." /><Step number="02" title="Confere" text="Revê itens, observações, recebimento, pagamento e total." /><Step number="03" title="Envia" text="O WhatsApp abre com o pedido pronto para a loja confirmar." /></div></div>
-          <div className="experience-photo" data-reveal><img src="https://images.pexels.com/photos/12273052/pexels-photo-12273052.jpeg?auto=compress&cs=tinysrgb&w=1500" alt="Bowl de açaí com frutas e granola" /><div className="floating-note"><Star size={15} fill="currentColor" /> fruta fresca + textura cremosa</div></div>
+          <div className="experience-photo" data-reveal><img src="https://images.pexels.com/photos/17597421/pexels-photo-17597421.jpeg?auto=compress&cs=tinysrgb&w=1500" alt="Bowl de açaí com frutas e granola" /><div className="floating-note"><Star size={15} fill="currentColor" /> fruta fresca + textura cremosa</div></div>
         </div>
       </section>
 

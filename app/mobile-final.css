@@ -1,0 +1,41 @@
+/* ROXO 53 — mobile final: mesma direção do desktop, composição própria para touch */
+@media (max-width: 700px) {
+  html,body,.site{max-width:100%;overflow-x:hidden}
+  .topbar{height:70px}.topbar-inner{gap:12px}.shell{width:min(100% - 28px,1220px)}
+  .hero{min-height:0;padding-top:70px;overflow:hidden;background:var(--ink)}
+  .hero-media{position:relative;inset:auto;height:clamp(330px,92vw,390px);min-height:0;overflow:hidden;background:#211029}
+  .hero-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 43%;transform:scale(1.015)}
+  .hero-scrim{background:linear-gradient(180deg,rgba(21,7,30,.04),rgba(21,7,30,.16) 58%,rgba(21,7,30,.52))}
+  .hero-content{min-height:0;padding:27px 0 40px;justify-content:flex-start;align-items:stretch}
+  .hero-eyebrow{font-size:8px;line-height:1.45}.hero-eyebrow>span:last-child{display:inline-flex}
+  .hero h1{max-width:6.8em;margin-top:22px;font-size:clamp(49px,14.3vw,61px);line-height:.83;letter-spacing:-.07em}
+  .hero-content>p{max-width:34ch;margin-top:20px;font-size:13.5px;line-height:1.62;color:rgba(255,255,255,.72)}
+  .hero-actions{display:grid;grid-template-columns:1fr 1fr;width:100%;gap:9px;margin-top:23px}.hero-actions .btn{min-width:0;padding:0 13px;font-size:11px;line-height:1.2}
+  .hero-proof{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:30px;padding:17px 0 0;border-top:1px solid rgba(255,255,255,.13)}
+  .hero-proof>div{padding-right:10px}.hero-proof strong{font-size:6.5px}.hero-proof b{font-size:13px;line-height:1.2}.hero-tag{display:none}
+  .brand-strip-track{min-height:48px;animation-duration:24s}.brand-strip span{font-size:8px;gap:20px}.brand-strip-track{gap:20px}
+  .section{padding:76px 0}.section-head{gap:18px;margin-bottom:36px}.section-head h2,.experience-copy h2{font-size:clamp(43px,12.4vw,55px);line-height:.87;letter-spacing:-.067em}.section-head>p{font-size:13px;line-height:1.65}
+  .why-intro{grid-template-columns:1fr;gap:18px;margin-bottom:30px}.why-intro h2{font-size:clamp(44px,12.5vw,56px);line-height:.87}.why-intro p{font-size:13px}.why-card{min-height:190px;padding:21px;border-radius:22px}.why-card h3{font-size:26px}
+}
+@media (max-width: 700px) {
+  .featured-grid{display:grid;grid-template-columns:1fr;grid-template-rows:none;gap:14px;min-height:0}.featured-card,.featured-card-1,.featured-card-2,.featured-card-3{grid-column:auto;grid-row:auto;min-height:430px;border-radius:22px}.featured-card-1{min-height:470px}.featured-copy{inset:auto 17px 17px}.featured-copy h3,.featured-card-2 .featured-copy h3,.featured-card-3 .featured-copy h3{font-size:35px;line-height:.92}.featured-copy p,.featured-card-2 .featured-copy p,.featured-card-3 .featured-copy p{display:block;font-size:11.5px;line-height:1.55}.featured-image img{object-position:center}
+  .editorial{grid-template-columns:1fr;min-height:0}.editorial-photo{min-height:360px;height:360px}.editorial-photo img{object-position:center 46%}.editorial-panel{min-height:0;padding:48px 20px 56px}.editorial-panel h2{max-width:100%;font-size:clamp(44px,12.8vw,56px);line-height:.88;letter-spacing:-.067em;overflow-wrap:normal;word-break:normal}.editorial-panel p{margin-top:22px;font-size:13px;line-height:1.65}.editorial-signature{right:20px;bottom:18px}
+  .builder{grid-template-columns:1fr;gap:18px}.builder-options{border-radius:22px}.builder-group{padding:20px 15px}.builder-group-title h3{font-size:23px}.size-grid{grid-template-columns:1fr}.size-card{min-height:66px;flex-direction:row;align-items:center;border-radius:15px}.choice-grid{grid-template-columns:1fr}.choice{min-height:52px;border-radius:14px}.builder-summary{position:relative;top:auto;padding:14px;border-radius:22px}.summary-visual{height:210px}.summary-price strong{font-size:34px}
+  .menu-tabs{width:100%;justify-self:start}.menu-tabs button{flex:1;padding:0 6px}.menu-cards{grid-template-columns:1fr;gap:12px}.menu-card{grid-template-columns:108px 1fr;border-radius:18px}.menu-card-photo{min-height:164px}.menu-card-copy{padding:14px}.menu-card-copy h3{font-size:21px}.menu-card-copy p{font-size:10px;line-height:1.5}.menu-card-copy button{width:36px;padding:0;justify-content:center;font-size:0}
+  .extras-block{margin-top:30px;padding:20px 16px;border-radius:22px}.extras-copy h3{font-size:43px}.extras-lists{grid-template-columns:1fr}.extras-list{border-radius:16px}
+  .lifestyle-section{padding:76px 0}.lifestyle-grid{grid-template-columns:1fr;gap:28px}.lifestyle-copy h2{font-size:clamp(45px,12.5vw,56px)}.lifestyle-copy p{font-size:13px}.lifestyle-photos{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:235px 155px;gap:9px;min-height:0}.life-photo{border-radius:18px}.life-photo-a{grid-column:1/-1;grid-row:auto}.life-photo-b,.life-photo-c{grid-row:2}.life-photo img{object-position:center}
+}
+@media (max-width: 700px) {
+  .experience-grid{display:flex;width:100%;flex-direction:column}.experience-photo{order:-1;min-height:360px;height:360px}.experience-photo img{object-position:center 42%}.floating-note{left:14px;right:14px;bottom:14px;justify-content:center;font-size:8px}.experience-copy{padding:52px 14px 66px}.experience-copy h2{max-width:6.8em;font-size:clamp(43px,12.4vw,54px);line-height:.88;overflow-wrap:normal;word-break:normal}.steps{margin-top:34px}.step{grid-template-columns:40px 1fr;padding:17px 0}.step h3{font-size:20px}.step p{font-size:11.5px}
+  .faq-grid{grid-template-columns:1fr;gap:30px}.faq-title{position:static}.faq-title h2{font-size:clamp(44px,12.4vw,55px)}.faq-list summary{min-height:68px;font-size:17px;line-height:1.2}.faq-list details p{font-size:12.5px}
+  .store-section{padding:72px 0}.store-grid{grid-template-columns:1fr;gap:14px}.store-card,.store-poster{border-radius:22px}.store-card{padding:30px 20px}.store-card h2{font-size:61px}.store-card>p{font-size:13px}.store-info{grid-template-columns:1fr;margin:27px 0}.store-info>div{min-height:76px}.store-poster{min-height:350px;padding:24px}.store-poster>span{width:62px;height:62px;font-size:25px}.store-poster p{font-size:clamp(41px,12vw,52px)}
+  .store-map-frame{height:205px}.store-map-overlay{left:10px;right:10px;bottom:10px;padding:10px}.store-map-overlay a{min-height:42px}
+  .final-cta{grid-template-columns:1fr;min-height:0}.final-image{min-height:360px;height:360px}.final-image img{object-position:center}.final-text{padding:50px 20px 68px}.final-text h2{font-size:clamp(50px,14.2vw,64px);line-height:.86;margin:18px 0 26px}
+  footer{padding-bottom:90px}.footer-grid{gap:17px}.floating-cart{width:calc(100% - 28px);min-width:0;bottom:12px}.cart-toast{bottom:80px}
+  .drawer-head{min-height:78px}.drawer-body{padding:14px}.cart-item{grid-template-columns:76px 1fr}.cart-thumb{height:96px}.cart-copy{padding-right:0}.quantity{position:static;margin-top:8px;justify-self:end;grid-column:2}.checkout-form{padding:13px}.checkout-segmented.three{grid-template-columns:1fr}
+}
+@media (max-width: 390px) {
+  .hero h1{font-size:48px}.hero-actions{grid-template-columns:1fr}.hero-proof b{font-size:12px}
+  .editorial-panel h2,.experience-copy h2,.section-head h2,.why-intro h2,.faq-title h2{font-size:42px}
+  .menu-card{grid-template-columns:100px 1fr}.lifestyle-photos{grid-template-rows:220px 145px}.store-card h2{font-size:57px}.final-text h2{font-size:50px}
+}
