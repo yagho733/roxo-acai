@@ -5,12 +5,17 @@ import {
   ArrowDown,
   ArrowRight,
   Check,
+  ChevronDown,
   ChevronRight,
   Clock3,
+  Layers3,
+  Leaf,
   MapPin,
   Menu,
+  MessageCircle,
   Minus,
   Plus,
+  ShieldCheck,
   ShoppingBag,
   Sparkles,
   Star,
@@ -29,10 +34,11 @@ type Product = {
   badge?: string
   position?: string
 }
-
 type CartItem = Product & { quantity: number }
 type Choice = { name: string; extra: number }
+type ConfirmedOrder = { items: CartItem[]; total: number }
 
+const WHATSAPP_NUMBER = '5553999563554'
 const money = (value: number) => `R$ ${value.toFixed(2).replace('.', ',')}`
 
 const products: Product[] = [
@@ -112,6 +118,29 @@ const fruits: Choice[] = ['Banana', 'Morango', 'Kiwi'].map((name) => ({ name, ex
 const crunch: Choice[] = ['Granola', 'Paçoca', 'Leite em pó', 'Gotas de chocolate'].map((name) => ({ name, extra: 1.5 }))
 const creams: Choice[] = ['Creme de Ninho', 'Creme de paçoca', 'Creme de chocolate'].map((name) => ({ name, extra: 2.5 }))
 
+const faq = [
+  ['Como funciona o Monte o teu?', 'Escolhe o tamanho, adiciona frutas, crocâncias e cremes e acompanha o valor atualizado antes de colocar no pedido.'],
+  ['As frutas têm valor adicional?', 'Neste cardápio, banana, morango e kiwi estão incluídos na montagem. Crocâncias e cremes mostram o adicional ao lado de cada opção.'],
+  ['Posso pedir para retirada ou delivery?', 'Sim. Depois de confirmar o carrinho, o site abre o WhatsApp com o pedido completo para combinar retirada ou entrega.'],
+  ['Como finalizo o pedido?', 'Revê o carrinho, confirma os itens e então toca em Enviar pedido no WhatsApp. A mensagem já vai com produtos, quantidades, detalhes e total.'],
+  ['E sobre alergênicos?', 'Alguns complementos podem conter leite, amendoim, castanhas, soja ou glúten. Confirme ingredientes e restrições no atendimento antes de finalizar.'],
+]
+
+function buildOrderMessage(order: ConfirmedOrder) {
+  const items = order.items
+    .map((item) => {
+      const subtotal = item.price * item.quantity
+      return `${item.quantity}x ${item.name} — ${money(subtotal)}\n${item.description}`
+    })
+    .join('\n\n')
+
+  return `Olá! Quero fazer este pedido na ROXO 53:\n\n${items}\n\nTotal do pedido: ${money(order.total)}\n\nPode confirmar meu pedido, por favor?`
+}
+
+function whatsappUrl(order: ConfirmedOrder) {
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(buildOrderMessage(order))}`
+}
+
 export default function Page() {
   const [cart, setCart] = useState<CartItem[]>([])
   const [drawerOpen, setDrawerOpen] = useState(false)
@@ -119,7 +148,7 @@ export default function Page() {
   const [category, setCategory] = useState<Category>('Favoritos')
   const [size, setSize] = useState<Choice>(sizes[1])
   const [choices, setChoices] = useState<Choice[]>([])
-  const [checkoutReady, setCheckoutReady] = useState(false)
+  const [confirmedOrder, setConfirmedOrder] = useState<ConfirmedOrder | null>(null)
 
   const visibleProducts = useMemo(() => products.filter((product) => product.category === category), [category])
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0)
@@ -128,27 +157,24 @@ export default function Page() {
 
   useEffect(() => {
     document.body.style.overflow = drawerOpen || menuOpen ? 'hidden' : ''
-    return () => {
-      document.body.style.overflow = ''
-    }
+    return () => { document.body.style.overflow = '' }
   }, [drawerOpen, menuOpen])
 
   useEffect(() => {
     const nodes = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'))
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible')
-            observer.unobserve(entry.target)
-          }
-        })
-      },
-      { threshold: 0.12, rootMargin: '0px 0px -7% 0px' },
-    )
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible')
+          observer.unobserve(entry.target)
+        }
+      })
+    }, { threshold: 0.12, rootMargin: '0px 0px -7% 0px' })
     nodes.forEach((node) => observer.observe(node))
     return () => observer.disconnect()
   }, [])
+
+  const invalidateConfirmation = () => setConfirmedOrder(null)
 
   const scrollTo = (id: string) => {
     setMenuOpen(false)
@@ -156,11 +182,11 @@ export default function Page() {
   }
 
   const addToCart = (product: Product, open = true) => {
-    setCheckoutReady(false)
+    invalidateConfirmation()
     setCart((current) => {
       const existing = current.find((item) => item.id === product.id)
       return existing
-        ? current.map((item) => (item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item))
+        ? current.map((item) => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item)
         : [...current, { ...product, quantity: 1 }]
     })
     if (open) setDrawerOpen(true)
@@ -181,22 +207,23 @@ export default function Page() {
   }
 
   const updateQuantity = (id: string, amount: number) => {
-    setCheckoutReady(false)
-    setCart((current) =>
-      current.flatMap((item) => {
-        if (item.id !== id) return [item]
-        const quantity = item.quantity + amount
-        return quantity > 0 ? [{ ...item, quantity }] : []
-      }),
-    )
+    invalidateConfirmation()
+    setCart((current) => current.flatMap((item) => {
+      if (item.id !== id) return [item]
+      const quantity = item.quantity + amount
+      return quantity > 0 ? [{ ...item, quantity }] : []
+    }))
   }
 
   const toggleChoice = (choice: Choice) => {
-    setChoices((current) =>
-      current.some((item) => item.name === choice.name)
-        ? current.filter((item) => item.name !== choice.name)
-        : [...current, choice],
-    )
+    setChoices((current) => current.some((item) => item.name === choice.name)
+      ? current.filter((item) => item.name !== choice.name)
+      : [...current, choice])
+  }
+
+  const confirmOrder = () => {
+    if (!cart.length) return
+    setConfirmedOrder({ items: cart.map((item) => ({ ...item })), total: cartTotal })
   }
 
   return (
@@ -207,23 +234,16 @@ export default function Page() {
             <span className="brand-mark">53</span>
             <span className="brand-name"><strong>ROXO</strong><small>AÇAÍ & BOWLS</small></span>
           </button>
-
           <nav className="desktop-nav" aria-label="Navegação principal">
             <button onClick={() => scrollTo('favoritos')}>Favoritos</button>
             <button onClick={() => scrollTo('monte')}>Monte o teu</button>
             <button onClick={() => scrollTo('cardapio')}>Cardápio</button>
+            <button onClick={() => scrollTo('faq')}>Dúvidas</button>
             <button onClick={() => scrollTo('loja')}>Loja</button>
           </nav>
-
           <div className="header-actions">
-            <button className="cart-pill" onClick={() => setDrawerOpen(true)}>
-              <ShoppingBag size={17} />
-              <span>Pedido</span>
-              <b>{cartCount}</b>
-            </button>
-            <button className="menu-toggle" onClick={() => setMenuOpen((value) => !value)} aria-label="Abrir menu">
-              {menuOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
+            <button className="cart-pill" onClick={() => setDrawerOpen(true)}><ShoppingBag size={17} /><span>Pedido</span><b>{cartCount}</b></button>
+            <button className="menu-toggle" onClick={() => setMenuOpen((value) => !value)} aria-label="Abrir menu">{menuOpen ? <X size={22} /> : <Menu size={22} />}</button>
           </div>
         </div>
       </header>
@@ -232,37 +252,22 @@ export default function Page() {
         <div className="mobile-menu">
           <div className="mobile-menu-copy">AÇAÍ CREMOSO, FRUTA FRESCA E CAMADAS DO TEU JEITO.</div>
           {[
-            ['favoritos', 'Favoritos'],
-            ['monte', 'Monte o teu'],
-            ['cardapio', 'Cardápio'],
-            ['loja', 'Loja'],
+            ['favoritos', 'Favoritos'], ['monte', 'Monte o teu'], ['cardapio', 'Cardápio'], ['faq', 'Dúvidas'], ['loja', 'Loja'],
           ].map(([id, label], index) => (
-            <button key={id} onClick={() => scrollTo(id)}>
-              <span>0{index + 1}</span>{label}<ChevronRight size={22} />
-            </button>
+            <button key={id} onClick={() => scrollTo(id)}><span>0{index + 1}</span>{label}<ChevronRight size={22} /></button>
           ))}
         </div>
       )}
 
       <section id="inicio" className="hero">
-        <div className="hero-media" aria-hidden="true">
-          <img src="/images/acai-hero.png" alt="" />
-          <div className="hero-scrim" />
-        </div>
+        <div className="hero-media" aria-hidden="true"><img src="/images/acai-hero.png" alt="" /><div className="hero-scrim" /></div>
         <div className="shell hero-content" data-reveal>
           <div className="hero-eyebrow"><span /> PELOTAS · RS <span>FEITO NA HORA</span></div>
-          <h1>
-            NÃO É SÓ AÇAÍ.<br />
-            <em>É O TEU ROXO.</em>
-          </h1>
+          <h1>NÃO É SÓ AÇAÍ.<br /><em>É O TEU ROXO.</em></h1>
           <p>Açaí cremoso, frutas frescas e combinações feitas do teu jeito. Escolhe as camadas e monta o teu em poucos cliques.</p>
           <div className="hero-actions">
-            <button className="btn btn-lime" onClick={() => scrollTo('monte')}>
-              Montar meu açaí <ArrowDown size={17} />
-            </button>
-            <button className="btn btn-glass" onClick={() => scrollTo('favoritos')}>
-              Ver os favoritos
-            </button>
+            <button className="btn btn-lime" onClick={() => scrollTo('monte')}>Montar meu açaí <ArrowDown size={17} /></button>
+            <button className="btn btn-glass" onClick={() => scrollTo('favoritos')}>Ver os favoritos</button>
           </div>
           <div className="hero-proof">
             <div><strong>A partir de</strong><b>R$ 14,90</b></div>
@@ -273,41 +278,36 @@ export default function Page() {
         <div className="hero-tag">ROXO 53 · AÇAÍ & BOWLS · ROXO 53 · AÇAÍ & BOWLS ·</div>
       </section>
 
-      <section className="brand-strip" aria-label="Diferenciais">
-        <div className="brand-strip-track">
-          {['AÇAÍ CREMOSO', 'FRUTA FRESCA', 'CROCÂNCIA', 'CREMES', 'DO TEU JEITO', 'FEITO NA HORA'].map((item) => (
-            <span key={item}>{item}<i>53</i></span>
-          ))}
+      <section className="brand-strip" aria-label="Diferenciais"><div className="brand-strip-track">
+        {['AÇAÍ CREMOSO', 'FRUTA FRESCA', 'CROCÂNCIA', 'CREMES', 'DO TEU JEITO', 'FEITO NA HORA'].map((item) => <span key={item}>{item}<i>53</i></span>)}
+      </div></section>
+
+      <section className="why-section section">
+        <div className="shell">
+          <div className="why-intro" data-reveal>
+            <span className="section-number">01 · POR QUE ROXO</span>
+            <h2>Mais sabor.<br /><em>Menos enrolação.</em></h2>
+            <p>Do produto ao pedido, tudo foi pensado para deixar a escolha simples e o bowl com a tua cara.</p>
+          </div>
+          <div className="why-grid" data-reveal>
+            <WhyCard icon={<Leaf size={24} />} number="01" title="Fruta em destaque" text="Combinações em que fruta, açaí e textura aparecem de verdade em cada camada." />
+            <WhyCard icon={<Layers3 size={24} />} number="02" title="Montagem livre" text="Escolhe tamanho, frutas, crocâncias e cremes com o preço atualizado na hora." />
+            <WhyCard icon={<ShieldCheck size={24} />} number="03" title="Pedido conferido" text="Antes do WhatsApp, o carrinho trava uma versão confirmada com itens, quantidades e total." />
+          </div>
         </div>
       </section>
 
       <section id="favoritos" className="section dark-section">
         <div className="shell">
           <div className="section-head" data-reveal>
-            <div>
-              <span className="section-number">01 · FAVORITOS DA CASA</span>
-              <h2>Começa pelos<br /><em>que não falham.</em></h2>
-            </div>
+            <div><span className="section-number">02 · FAVORITOS DA CASA</span><h2>Começa pelos<br /><em>que não falham.</em></h2></div>
             <p>Três combinações equilibradas para pedir rápido: fruta fresca, textura cremosa e crocância na medida.</p>
           </div>
-
           <div className="featured-grid">
             {products.slice(0, 3).map((product, index) => (
               <article className={`featured-card featured-card-${index + 1}`} key={product.id} data-reveal>
-                <div className="featured-image">
-                  <img src={product.image} alt={product.name} style={{ objectPosition: product.position || 'center' }} />
-                  <span className="product-badge">{product.badge}</span>
-                  <span className="product-index">0{index + 1}</span>
-                </div>
-                <div className="featured-copy">
-                  <span>{product.kicker}</span>
-                  <h3>{product.name}</h3>
-                  <p>{product.description}</p>
-                  <div>
-                    <strong>{money(product.price)}</strong>
-                    <button onClick={() => addToCart(product)} aria-label={`Adicionar ${product.name}`}><Plus size={20} /></button>
-                  </div>
-                </div>
+                <div className="featured-image"><img src={product.image} alt={product.name} style={{ objectPosition: product.position || 'center' }} /><span className="product-badge">{product.badge}</span><span className="product-index">0{index + 1}</span></div>
+                <div className="featured-copy"><span>{product.kicker}</span><h3>{product.name}</h3><p>{product.description}</p><div><strong>{money(product.price)}</strong><button onClick={() => addToCart(product)} aria-label={`Adicionar ${product.name}`}><Plus size={20} /></button></div></div>
               </article>
             ))}
           </div>
@@ -315,72 +315,25 @@ export default function Page() {
       </section>
 
       <section className="editorial" data-reveal>
-        <div className="editorial-photo">
-          <img src="/images/acai-closeup.png" alt="Açaí em camadas com frutas e creme" />
-        </div>
-        <div className="editorial-panel">
-          <span className="section-number">02 · CAMADA POR CAMADA</span>
-          <h2>Cremoso.<br />Fresco.<br /><em>Irresistível.</em></h2>
-          <p>Da base de açaí aos complementos, cada camada entra para equilibrar sabor, textura e aquela vontade de repetir.</p>
-          <div className="editorial-signature">ROXO / 53</div>
-        </div>
+        <div className="editorial-photo"><img src="/images/acai-closeup.png" alt="Açaí em camadas com frutas e creme" /></div>
+        <div className="editorial-panel"><span className="section-number">03 · CAMADA POR CAMADA</span><h2>Cremoso.<br />Fresco.<br /><em>Irresistível.</em></h2><p>Da base de açaí aos complementos, cada camada entra para equilibrar sabor, textura e aquela vontade de repetir.</p><div className="editorial-signature">ROXO / 53</div></div>
       </section>
 
       <section id="monte" className="section builder-section">
         <div className="shell">
-          <div className="section-head light-head" data-reveal>
-            <div>
-              <span className="section-number">03 · ROXO LAB</span>
-              <h2>Monte o teu.<br /><em>Do teu jeito.</em></h2>
-            </div>
-            <p>Escolhe o tamanho, combina frutas, crocâncias e cremes, e acompanha o valor enquanto monta.</p>
-          </div>
-
+          <div className="section-head light-head" data-reveal><div><span className="section-number">04 · ROXO LAB</span><h2>Monte o teu.<br /><em>Do teu jeito.</em></h2></div><p>Escolhe o tamanho, combina frutas, crocâncias e cremes, e acompanha o valor enquanto monta.</p></div>
           <div className="builder" data-reveal>
             <div className="builder-options">
-              <BuilderGroup number="01" title="Tamanho">
-                <div className="size-grid">
-                  {sizes.map((item) => (
-                    <button key={item.name} className={size.name === item.name ? 'size-card active' : 'size-card'} onClick={() => setSize(item)}>
-                      <span>{item.name}</span><strong>{money(item.extra)}</strong>
-                    </button>
-                  ))}
-                </div>
-              </BuilderGroup>
-
-              <BuilderGroup number="02" title="Frutas">
-                <ChoiceGrid items={fruits} selected={choices} onToggle={toggleChoice} />
-              </BuilderGroup>
-
-              <BuilderGroup number="03" title="Crocância">
-                <ChoiceGrid items={crunch} selected={choices} onToggle={toggleChoice} />
-              </BuilderGroup>
-
-              <BuilderGroup number="04" title="Cremes">
-                <ChoiceGrid items={creams} selected={choices} onToggle={toggleChoice} />
-              </BuilderGroup>
+              <BuilderGroup number="01" title="Tamanho"><div className="size-grid">{sizes.map((item) => <button key={item.name} className={size.name === item.name ? 'size-card active' : 'size-card'} onClick={() => setSize(item)}><span>{item.name}</span><strong>{money(item.extra)}</strong></button>)}</div></BuilderGroup>
+              <BuilderGroup number="02" title="Frutas"><ChoiceGrid items={fruits} selected={choices} onToggle={toggleChoice} /></BuilderGroup>
+              <BuilderGroup number="03" title="Crocância"><ChoiceGrid items={crunch} selected={choices} onToggle={toggleChoice} /></BuilderGroup>
+              <BuilderGroup number="04" title="Cremes"><ChoiceGrid items={creams} selected={choices} onToggle={toggleChoice} /></BuilderGroup>
             </div>
-
             <aside className="builder-summary">
-              <div className="summary-top">
-                <span>SEU ROXO</span>
-                <Sparkles size={20} />
-              </div>
-              <div className="summary-visual">
-                <img src="/images/acai-bowl.png" alt="Bowl de açaí" />
-                <div className="summary-size">{size.name}</div>
-              </div>
-              <div className="summary-price">
-                <span>Total</span><strong>{money(customTotal)}</strong>
-              </div>
-              <div className="summary-list">
-                <span>SUAS CAMADAS</span>
-                {choices.length ? (
-                  <div>{choices.map((item) => <b key={item.name}>{item.name}</b>)}</div>
-                ) : (
-                  <p>Escolhe frutas, crocâncias e cremes para personalizar.</p>
-                )}
-              </div>
+              <div className="summary-top"><span>SEU ROXO</span><Sparkles size={20} /></div>
+              <div className="summary-visual"><img src="/images/acai-bowl.png" alt="Bowl de açaí" /><div className="summary-size">{size.name}</div></div>
+              <div className="summary-price"><span>Total</span><strong>{money(customTotal)}</strong></div>
+              <div className="summary-list"><span>SUAS CAMADAS</span>{choices.length ? <div>{choices.map((item) => <b key={item.name}>{item.name}</b>)}</div> : <p>Escolhe frutas, crocâncias e cremes para personalizar.</p>}</div>
               <button className="btn btn-dark full" onClick={addCustom}>Adicionar ao pedido <ShoppingBag size={17} /></button>
               <small>O total é atualizado conforme as escolhas do teu bowl.</small>
             </aside>
@@ -390,215 +343,110 @@ export default function Page() {
 
       <section id="cardapio" className="section menu-section">
         <div className="shell">
-          <div className="section-head menu-head" data-reveal>
-            <div>
-              <span className="section-number">04 · CARDÁPIO</span>
-              <h2>Escolhe fácil.<br /><em>Pede melhor.</em></h2>
-            </div>
-            <div className="menu-tabs" role="tablist">
-              {(['Favoritos', 'Combos', 'Bebidas'] as Category[]).map((item) => (
-                <button role="tab" aria-selected={category === item} className={category === item ? 'active' : ''} onClick={() => setCategory(item)} key={item}>{item}</button>
-              ))}
+          <div className="section-head menu-head" data-reveal><div><span className="section-number">05 · CARDÁPIO</span><h2>Escolhe fácil.<br /><em>Pede melhor.</em></h2></div><div className="menu-tabs" role="tablist">{(['Favoritos', 'Combos', 'Bebidas'] as Category[]).map((item) => <button role="tab" aria-selected={category === item} className={category === item ? 'active' : ''} onClick={() => setCategory(item)} key={item}>{item}</button>)}</div></div>
+          <div className="menu-cards" data-reveal>{visibleProducts.map((product) => <article className="menu-card" key={product.id}><div className="menu-card-photo"><img src={product.image} alt={product.name} style={{ objectPosition: product.position || 'center' }} loading="lazy" /></div><div className="menu-card-copy"><span>{product.kicker}</span><h3>{product.name}</h3><p>{product.description}</p><div><strong>{money(product.price)}</strong><button onClick={() => addToCart(product)}>Adicionar <Plus size={16} /></button></div></div></article>)}</div>
+
+          <div className="extras-block" data-reveal>
+            <div className="extras-copy"><span className="section-number">EXTRAS DA MONTAGEM</span><h3>Mais camada,<br />mais teu.</h3><p>O cardápio fica mais completo sem poluir as fotos: os adicionais aparecem com preço claro e entram direto no total do ROXO LAB.</p></div>
+            <div className="extras-lists">
+              <Extras title="Frutas incluídas" items={fruits} />
+              <Extras title="Crocâncias" items={crunch} />
+              <Extras title="Cremes" items={creams} />
             </div>
           </div>
+        </div>
+      </section>
 
-          <div className="menu-cards" data-reveal>
-            {visibleProducts.map((product) => (
-              <article className="menu-card" key={product.id}>
-                <div className="menu-card-photo"><img src={product.image} alt={product.name} style={{ objectPosition: product.position || 'center' }} loading="lazy" /></div>
-                <div className="menu-card-copy">
-                  <span>{product.kicker}</span>
-                  <h3>{product.name}</h3>
-                  <p>{product.description}</p>
-                  <div><strong>{money(product.price)}</strong><button onClick={() => addToCart(product)}>Adicionar <Plus size={16} /></button></div>
-                </div>
-              </article>
-            ))}
+      <section className="lifestyle-section">
+        <div className="shell lifestyle-grid">
+          <div className="lifestyle-copy" data-reveal><span className="section-number">06 · DO BALCÃO AO DELIVERY</span><h2>A cara do<br /><em>ROXO.</em></h2><p>Uma marca de comida fica mais forte quando mostra produto, preparo e momento de consumo — não só cardápio.</p><div className="lifestyle-tags"><span>feito na hora</span><span>camadas visíveis</span><span>pedido rápido</span></div></div>
+          <div className="lifestyle-photos" data-reveal>
+            <figure className="life-photo life-photo-a"><img src="/images/acai-bowl.png" alt="Bowl de açaí ROXO 53" /></figure>
+            <figure className="life-photo life-photo-b"><img src="https://images.pexels.com/photos/12273052/pexels-photo-12273052.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Açaí com frutas e granola" /></figure>
+            <figure className="life-photo life-photo-c"><img src="/images/acai-closeup.png" alt="Detalhe de açaí em camadas" /></figure>
           </div>
         </div>
       </section>
 
       <section className="experience-section">
         <div className="shell experience-grid">
-          <div className="experience-copy" data-reveal>
-            <span className="section-number">05 · DO CLIQUE À COLHER</span>
-            <h2>Seu pedido<br />sem<br /><em>complicação.</em></h2>
-            <div className="steps">
-              <Step number="01" title="Escolhe" text="Vai nos favoritos ou monta o teu do zero." />
-              <Step number="02" title="Confere" text="Revê os itens, quantidades e o total do pedido." />
-              <Step number="03" title="Finaliza" text="Deixa tudo pronto para seguir pelo canal de atendimento da loja." />
-            </div>
-          </div>
-          <div className="experience-photo" data-reveal>
-            <img src="https://images.pexels.com/photos/12273052/pexels-photo-12273052.jpeg?auto=compress&cs=tinysrgb&w=1500" alt="Bowl de açaí com frutas e granola" />
-            <div className="floating-note"><Star size={15} fill="currentColor" /> fruta fresca + textura cremosa</div>
-          </div>
+          <div className="experience-copy" data-reveal><span className="section-number">07 · DO CLIQUE À COLHER</span><h2>Seu pedido<br />sem<br /><em>complicação.</em></h2><div className="steps"><Step number="01" title="Escolhe" text="Vai nos favoritos ou monta o teu do zero." /><Step number="02" title="Confere" text="Revê itens, quantidades e total antes de confirmar." /><Step number="03" title="Envia" text="Depois da confirmação, o WhatsApp abre com exatamente o pedido que foi fechado." /></div></div>
+          <div className="experience-photo" data-reveal><img src="https://images.pexels.com/photos/12273052/pexels-photo-12273052.jpeg?auto=compress&cs=tinysrgb&w=1500" alt="Bowl de açaí com frutas e granola" /><div className="floating-note"><Star size={15} fill="currentColor" /> fruta fresca + textura cremosa</div></div>
+        </div>
+      </section>
+
+      <section id="faq" className="section faq-section">
+        <div className="shell faq-grid">
+          <div className="faq-title" data-reveal><span className="section-number">08 · DÚVIDAS RÁPIDAS</span><h2>Antes de<br /><em>pedir.</em></h2><p>O essencial fica claro antes do cliente abrir o WhatsApp.</p></div>
+          <div className="faq-list" data-reveal>{faq.map(([question, answer]) => <details key={question}><summary><span>{question}</span><ChevronDown size={18} /></summary><p>{answer}</p></details>)}</div>
         </div>
       </section>
 
       <section id="loja" className="store-section">
         <div className="shell store-grid" data-reveal>
-          <div className="store-card">
-            <span className="section-number">PELOTAS · RS</span>
-            <h2>ROXO 53</h2>
-            <p>Açaí preparado na hora, combinações da casa e liberdade para montar cada camada do teu jeito.</p>
-            <div className="store-info">
-              <div><MapPin size={20} /><span>Pelotas, Rio Grande do Sul<small>Retirada + delivery</small></span></div>
-              <div><Clock3 size={20} /><span>18h — 23h<small>Todos os dias</small></span></div>
-            </div>
-            <button className="btn btn-lime" onClick={() => setDrawerOpen(true)}>Começar pedido <ArrowRight size={17} /></button>
-          </div>
-          <div className="store-poster">
-            <span>53</span>
-            <p>DO TEU JEITO.<br />ATÉ A ÚLTIMA<br /><strong>COLHERADA.</strong></p>
-          </div>
+          <div className="store-card"><span className="section-number">PELOTAS · RS</span><h2>ROXO 53</h2><p>Açaí preparado na hora, combinações da casa e liberdade para montar cada camada do teu jeito.</p><div className="store-info"><div><MapPin size={20} /><span>Pelotas, Rio Grande do Sul<small>Retirada + delivery</small></span></div><div><Clock3 size={20} /><span>18h — 23h<small>Todos os dias</small></span></div></div><button className="btn btn-lime" onClick={() => setDrawerOpen(true)}>Começar pedido <ArrowRight size={17} /></button></div>
+          <div className="store-poster"><span>53</span><p>DO TEU JEITO.<br />ATÉ A ÚLTIMA<br /><strong>COLHERADA.</strong></p></div>
         </div>
       </section>
 
-      <section className="final-cta" data-reveal>
-        <div className="final-image"><img src="/images/acai-bowl.png" alt="Açaí ROXO 53" /></div>
-        <div className="final-text">
-          <span>FOME DECIDIDA?</span>
-          <h2>Então vai<br /><em>de roxo.</em></h2>
-          <button className="btn btn-dark" onClick={() => setDrawerOpen(true)}>Fazer pedido <ArrowRight size={17} /></button>
-        </div>
-      </section>
+      <section className="final-cta" data-reveal><div className="final-image"><img src="/images/acai-bowl.png" alt="Açaí ROXO 53" /></div><div className="final-text"><span>FOME DECIDIDA?</span><h2>Então vai<br /><em>de roxo.</em></h2><button className="btn btn-dark" onClick={() => setDrawerOpen(true)}>Fazer pedido <ArrowRight size={17} /></button></div></section>
 
-      <footer>
-        <div className="shell footer-grid">
-          <div className="footer-brand"><strong>ROXO 53</strong><span>AÇAÍ & BOWLS</span></div>
-          <p>Açaí cremoso, frutas frescas e combinações feitas do teu jeito. Do primeiro clique à última colherada.</p>
-          <div className="footer-credit">DESENVOLVIDO POR YAGHO</div>
-        </div>
-      </footer>
+      <footer><div className="shell footer-grid"><div className="footer-brand"><strong>ROXO 53</strong><span>AÇAÍ & BOWLS</span></div><p>Açaí cremoso, frutas frescas e combinações feitas do teu jeito. Do primeiro clique à última colherada.</p></div></footer>
 
-      <button className={cartCount ? 'floating-cart visible' : 'floating-cart'} onClick={() => setDrawerOpen(true)}>
-        <ShoppingBag size={18} /><span>{cartCount} {cartCount === 1 ? 'item' : 'itens'}</span><strong>{money(cartTotal)}</strong>
-      </button>
+      <button className={cartCount ? 'floating-cart visible' : 'floating-cart'} onClick={() => setDrawerOpen(true)}><ShoppingBag size={18} /><span>{cartCount} {cartCount === 1 ? 'item' : 'itens'}</span><strong>{money(cartTotal)}</strong></button>
 
-      {drawerOpen && (
-        <CartDrawer
-          items={cart}
-          total={cartTotal}
-          ready={checkoutReady}
-          onClose={() => setDrawerOpen(false)}
-          onQuantity={updateQuantity}
-          onCheckout={() => setCheckoutReady(true)}
-          onContinue={() => {
-            setDrawerOpen(false)
-            requestAnimationFrame(() => scrollTo('cardapio'))
-          }}
-        />
-      )}
+      {drawerOpen && <CartDrawer items={cart} total={cartTotal} confirmed={confirmedOrder} onClose={() => setDrawerOpen(false)} onQuantity={updateQuantity} onConfirm={confirmOrder} onEdit={() => setConfirmedOrder(null)} onContinue={() => { setConfirmedOrder(null); setDrawerOpen(false); requestAnimationFrame(() => scrollTo('cardapio')) }} />}
     </main>
   )
 }
 
+function WhyCard({ icon, number, title, text }: { icon: ReactNode; number: string; title: string; text: string }) {
+  return <article className="why-card"><div className="why-card-top"><span>{number}</span>{icon}</div><h3>{title}</h3><p>{text}</p></article>
+}
+
+function Extras({ title, items }: { title: string; items: Choice[] }) {
+  return <div className="extras-list"><h4>{title}</h4>{items.map((item) => <div key={item.name}><span>{item.name}</span><b>{item.extra ? `+ ${money(item.extra)}` : 'incluso'}</b></div>)}</div>
+}
+
 function BuilderGroup({ number, title, children }: { number: string; title: string; children: ReactNode }) {
-  return (
-    <section className="builder-group">
-      <div className="builder-group-title"><span>{number}</span><h3>{title}</h3></div>
-      {children}
-    </section>
-  )
+  return <section className="builder-group"><div className="builder-group-title"><span>{number}</span><h3>{title}</h3></div>{children}</section>
 }
 
 function ChoiceGrid({ items, selected, onToggle }: { items: Choice[]; selected: Choice[]; onToggle: (item: Choice) => void }) {
-  return (
-    <div className="choice-grid">
-      {items.map((item) => {
-        const active = selected.some((choice) => choice.name === item.name)
-        return (
-          <button key={item.name} className={active ? 'choice active' : 'choice'} onClick={() => onToggle(item)}>
-            <span className="choice-check">{active ? <Check size={14} /> : <Plus size={14} />}</span>
-            <span>{item.name}</span>
-            <small>{item.extra ? `+ ${money(item.extra)}` : 'incluso'}</small>
-          </button>
-        )
-      })}
-    </div>
-  )
+  return <div className="choice-grid">{items.map((item) => {
+    const active = selected.some((choice) => choice.name === item.name)
+    return <button key={item.name} className={active ? 'choice active' : 'choice'} onClick={() => onToggle(item)}><span className="choice-check">{active ? <Check size={14} /> : <Plus size={14} />}</span><span>{item.name}</span><small>{item.extra ? `+ ${money(item.extra)}` : 'incluso'}</small></button>
+  })}</div>
 }
 
 function Step({ number, title, text }: { number: string; title: string; text: string }) {
-  return (
-    <div className="step">
-      <span>{number}</span>
-      <div><h3>{title}</h3><p>{text}</p></div>
-    </div>
-  )
+  return <div className="step"><span>{number}</span><div><h3>{title}</h3><p>{text}</p></div></div>
 }
 
-function CartDrawer({
-  items,
-  total,
-  ready,
-  onClose,
-  onQuantity,
-  onCheckout,
-  onContinue,
-}: {
+function CartDrawer({ items, total, confirmed, onClose, onQuantity, onConfirm, onEdit, onContinue }: {
   items: CartItem[]
   total: number
-  ready: boolean
+  confirmed: ConfirmedOrder | null
   onClose: () => void
   onQuantity: (id: string, amount: number) => void
-  onCheckout: () => void
+  onConfirm: () => void
+  onEdit: () => void
   onContinue: () => void
 }) {
-  return (
-    <div className="drawer-layer" role="dialog" aria-modal="true" aria-label="Seu pedido">
-      <button className="drawer-backdrop" onClick={onClose} aria-label="Fechar carrinho" />
-      <aside className="drawer">
-        <div className="drawer-head">
-          <div><span>ROXO 53</span><h2>Seu pedido</h2></div>
-          <button onClick={onClose} aria-label="Fechar"><X size={22} /></button>
-        </div>
+  const shownItems = confirmed?.items ?? items
+  const shownTotal = confirmed?.total ?? total
 
-        <div className="drawer-body">
-          {items.length === 0 ? (
-            <div className="empty-cart">
-              <div><ShoppingBag size={28} /></div>
-              <h3>Ainda tá vazio.</h3>
-              <p>Escolhe um favorito ou monta teu açaí do zero.</p>
-              <button className="btn btn-dark" onClick={onContinue}>Ver cardápio <ArrowRight size={16} /></button>
-            </div>
-          ) : (
-            <>
-              <div className="cart-list">
-                {items.map((item) => (
-                  <article className="cart-item" key={item.id}>
-                    <div className="cart-thumb"><img src={item.image} alt="" /></div>
-                    <div className="cart-copy">
-                      <span>{item.kicker}</span>
-                      <h3>{item.name}</h3>
-                      <p>{item.description}</p>
-                      <strong>{money(item.price)}</strong>
-                    </div>
-                    <div className="quantity">
-                      <button onClick={() => onQuantity(item.id, -1)} aria-label="Diminuir"><Minus size={14} /></button>
-                      <span>{item.quantity}</span>
-                      <button onClick={() => onQuantity(item.id, 1)} aria-label="Aumentar"><Plus size={14} /></button>
-                    </div>
-                  </article>
-                ))}
-              </div>
-
-              <div className="drawer-total"><span>Total</span><strong>{money(total)}</strong></div>
-
-              {ready ? (
-                <div className="checkout-note">
-                  <Check size={18} />
-                  <div><strong>Pedido revisado.</strong><p>Os itens estão organizados e prontos para seguir pelo canal de atendimento da loja.</p></div>
-                </div>
-              ) : (
-                <button className="btn btn-dark full" onClick={onCheckout}>Revisar pedido <ArrowRight size={17} /></button>
-              )}
-              <button className="continue-link" onClick={onContinue}>Continuar escolhendo</button>
-            </>
-          )}
-        </div>
-      </aside>
-    </div>
-  )
+  return <div className="drawer-layer" role="dialog" aria-modal="true" aria-label="Seu pedido">
+    <button className="drawer-backdrop" onClick={onClose} aria-label="Fechar carrinho" />
+    <aside className="drawer">
+      <div className="drawer-head"><div><span>ROXO 53</span><h2>{confirmed ? 'Pedido confirmado' : 'Seu pedido'}</h2></div><button onClick={onClose} aria-label="Fechar"><X size={22} /></button></div>
+      <div className="drawer-body">
+        {shownItems.length === 0 ? <div className="empty-cart"><div><ShoppingBag size={28} /></div><h3>Ainda tá vazio.</h3><p>Escolhe um favorito ou monta teu açaí do zero.</p><button className="btn btn-dark" onClick={onContinue}>Ver cardápio <ArrowRight size={16} /></button></div> : <>
+          <div className="cart-list">{shownItems.map((item) => <article className="cart-item" key={item.id}><div className="cart-thumb"><img src={item.image} alt="" /></div><div className="cart-copy"><span>{item.kicker}</span><h3>{item.name}</h3><p>{item.description}</p><strong>{money(item.price * item.quantity)}</strong></div>{confirmed ? <div className="confirmed-qty">{item.quantity}x</div> : <div className="quantity"><button onClick={() => onQuantity(item.id, -1)} aria-label="Diminuir"><Minus size={14} /></button><span>{item.quantity}</span><button onClick={() => onQuantity(item.id, 1)} aria-label="Aumentar"><Plus size={14} /></button></div>}</article>)}</div>
+          <div className="drawer-total"><span>Total</span><strong>{money(shownTotal)}</strong></div>
+          {confirmed ? <div className="confirmed-actions"><div className="checkout-note"><Check size={18} /><div><strong>Confira uma última vez.</strong><p>Este é o pedido que será enviado para o WhatsApp. Os valores e quantidades estão travados nesta confirmação.</p></div></div><a className="btn btn-whatsapp full" href={whatsappUrl(confirmed)} target="_blank" rel="noreferrer"><MessageCircle size={18} /> Enviar pedido no WhatsApp</a><button className="continue-link" onClick={onEdit}>Voltar e editar pedido</button></div> : <><button className="btn btn-dark full" onClick={onConfirm}>Confirmar pedido <Check size={17} /></button><button className="continue-link" onClick={onContinue}>Continuar escolhendo</button></>}
+        </>}
+      </div>
+    </aside>
+  </div>
 }
