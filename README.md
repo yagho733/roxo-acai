@@ -1,34 +1,36 @@
 # ROXO 53 — Açaí & Bowls
 
-Projeto comercial de uma açaiteria desenvolvido como demonstração de portfólio, com foco em identidade visual forte, experiência de pedido e conversão pelo WhatsApp.
+Site comercial para açaiteria, com identidade visual própria, cardápio interativo e fluxo de pedido completo pelo WhatsApp.
 
-## Site
+**Demo:** https://roxo-mu.vercel.app
 
-Produção: https://roxo-mu.vercel.app
+## Sobre o projeto
+
+O ROXO 53 foi desenvolvido como demonstração de uma experiência digital moderna para negócios de alimentação, unindo apresentação de marca, personalização do pedido e fechamento simples pelo WhatsApp.
 
 ## Principais recursos
 
-- Landing page responsiva com identidade própria
-- Cardápio visual por categorias
+- Layout responsivo com identidade visual própria
+- Cardápio por categorias
 - Montagem personalizada de açaí com cálculo de adicionais
 - Carrinho com quantidade, observações e opção de esvaziar
-- Retirada ou delivery
+- Escolha entre retirada e delivery
 - Forma de pagamento, endereço, troco e observação geral
 - Confirmação do pedido antes do envio
-- Pedido completo enviado pelo WhatsApp
+- Mensagem completa e organizada enviada pelo WhatsApp
 - FAQ, localização e Google Maps
-- SEO e Open Graph configurados
-- Deploy automático pela Vercel
+- SEO, Open Graph e Vercel Analytics
 
 ## Tecnologias
 
-- Next.js
-- React
+- Next.js 16
+- React 19
 - TypeScript
-- Tailwind CSS
+- Tailwind CSS 4
+- shadcn
 - Vercel Analytics
 
-## Rodar localmente
+## Executar localmente
 
 ```bash
 npm install
@@ -37,8 +39,10 @@ npm run dev
 
 Abra `http://localhost:3000`.
 
-## Objetivo
+## Observação
 
-O ROXO 53 foi criado como exemplo de site comercial para negócios de alimentação que precisam de uma presença digital mais profissional e de um fluxo simples de pedido online.
+Projeto demonstrativo de portfólio. Endereço, horários, cardápio, preços, fotos e contatos devem ser substituídos pelas informações oficiais antes de uma publicação comercial real.
 
-Antes de uso por um estabelecimento real, endereço, horários, cardápio, preços, fotos e demais informações devem ser substituídos pelos dados oficiais do cliente.
+## Autor
+
+Desenvolvido por Yagho Rosa — Desenvolvedor Web.
