@@ -1,33 +1,44 @@
-# roxo-a-ai
+# ROXO 53 — Açaí & Bowls
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).
+Projeto comercial de uma açaiteria desenvolvido como demonstração de portfólio, com foco em identidade visual forte, experiência de pedido e conversão pelo WhatsApp.
 
-## Built with v0
+## Site
 
-This repository is linked to a [v0](https://v0.app) project. You can continue developing by visiting the link below -- start new chats to make changes, and v0 will push commits directly to this repo. Every merge to `main` will automatically deploy.
+Produção: https://roxo-mu.vercel.app
 
-[Continue working on v0 →](https://v0.app/chat/projects/prj_55soaG4dPHYxdQdWncc5QEeg0Ha8)
+## Principais recursos
 
-## Getting Started
+- Landing page responsiva com identidade própria
+- Cardápio visual por categorias
+- Montagem personalizada de açaí com cálculo de adicionais
+- Carrinho com quantidade, observações e opção de esvaziar
+- Retirada ou delivery
+- Forma de pagamento, endereço, troco e observação geral
+- Confirmação do pedido antes do envio
+- Pedido completo enviado pelo WhatsApp
+- FAQ, localização e Google Maps
+- SEO e Open Graph configurados
+- Deploy automático pela Vercel
 
-First, run the development server:
+## Tecnologias
+
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- Vercel Analytics
+
+## Rodar localmente
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Objetivo
 
-## Learn More
+O ROXO 53 foi criado como exemplo de site comercial para negócios de alimentação que precisam de uma presença digital mais profissional e de um fluxo simples de pedido online.
 
-To learn more, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [v0 Documentation](https://v0.app/docs) - learn about v0 and how to use it.
+Antes de uso por um estabelecimento real, endereço, horários, cardápio, preços, fotos e demais informações devem ser substituídos pelos dados oficiais do cliente.
