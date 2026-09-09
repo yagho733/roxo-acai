@@ -1,0 +1,1 @@
+.footer-credit{display:none!important}.footer-grid{grid-template-columns:minmax(180px,.7fr) minmax(0,1.3fr)!important;align-items:end}.footer-grid>p{max-width:620px}.checkout-note strong{letter-spacing:-.01em}@media(max-width:760px){.footer-grid{grid-template-columns:1fr!important}.footer-grid>p{max-width:100%}}
